@@ -1,38 +1,41 @@
 package com.kuta;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.google.gson.Gson;
 import com.kuta.pathfinding_algos.BFS;
 import com.kuta.pathfinding_algos.XYNode;
+import com.kuta.util.ColorMe;
+import com.kuta.util.IO;
 
 /**
  * Main
  */
+@SpringBootApplication
 public class Main {
     public static void main(String[] args) {
+        SpringApplication.run(Main.class,args);
         Gson gson = new Gson();
-        String input = readFileToString(System.getProperty("user.dir")+"/inputs/01.json");
+        String input = "";
+        try {
+            input = IO.readFileIntoString(System.getProperty("user.dir")+"/src/main/resources/inputs/01.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String[][] inputMatrix = gson.fromJson(input,String[][].class);
-        int[][] numberMatrix = charMatrixToNumberMatrix(inputMatrix);
-        int[][] numberedGrid = createNumberedGrid(numberMatrix.length, numberMatrix[0].length);
-        printCharMatrix(inputMatrix);
-        //printNumberMatrix(numberMatrix);
-        //printNumberMatrix(numberedGrid);
-        int[] startCoords = BFS.findStart(inputMatrix);
-        List<XYNode> path = BFS.findClosestX(inputMatrix,startCoords[0],startCoords[1]);
-        for(int i = 1; i < path.size() - 1; i++){
+        List<XYNode> path = BFS.findCompletePathChain(inputMatrix,new String[] {"S","S","x"});
+        for(int i = 1; i < path.size(); i++){
             XYNode curr = path.get(i);
+            if(!inputMatrix[curr.x][curr.y].equalsIgnoreCase(".")) continue;
             inputMatrix[curr.x][curr.y] = "o";
         }
         printCharMatrix(inputMatrix);
+        System.out.println("Complete path size:"+path.size());
+        System.out.println("Ending position:"+path.getLast());
     }
 
 
@@ -55,68 +58,21 @@ public class Main {
         for (int i = 0; i < matrix.length; i++) {
             System.out.print(i+"|");
             for(int j = 0; j < matrix[i].length; j++){
+                if(matrix[i][j].equalsIgnoreCase("x")){
+                    System.out.print(ColorMe.red(matrix[i][j]));
+                    continue;
+                }
+                if(matrix[i][j].equalsIgnoreCase("S")){
+                    System.out.print(ColorMe.red(matrix[i][j]));
+                    continue;
+                }
+                if(matrix[i][j].equalsIgnoreCase("o")){
+                    System.out.print(ColorMe.green(matrix[i][j]));
+                    continue;
+                }
                 System.out.print(matrix[i][j]);
             }
             System.out.println();
         }
-    }
-
-    public static int[][] charMatrixToNumberMatrix(String[][] inputMatrix){
-
-        int[][] numberMatrix = new int[inputMatrix.length][inputMatrix[0].length];
-        for(int i = 0; i < numberMatrix.length; i++){
-            for(int j = 0; j < numberMatrix[0].length; j++){
-                if(inputMatrix[i][j].equals("#")){
-                    numberMatrix[i][j] = 0;
-                    continue;
-                }
-                if(inputMatrix[i][j].equals(".")){
-                    numberMatrix[i][j] = 1;
-                    continue;
-                }
-                if(inputMatrix[i][j].equals("x")){
-                    numberMatrix[i][j] = 2;
-                    continue;
-                }
-                if(inputMatrix[i][j].equalsIgnoreCase("s")){
-                    numberMatrix[i][j] = 3;
-                    continue;
-                }
-            }
-        }
-        return numberMatrix;
-    }
-
-    public static int[][] createNumberedGrid(int rows,int columns){
-        int[][] grid = new int[rows][columns];
-        int k = 0;
-        for (int i = 0; i < rows; i++) {
-            for(int j = 0; j < columns; j++){
-                grid[i][j] = k;
-                k++;
-            }
-        }
-
-        return grid;
-    }
-
-    public static String readFileToString(String filepath){
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new FileReader(filepath));
-            StringBuilder lines = new StringBuilder();
-            String line = reader.readLine();
-            while(line != null){
-                lines.append(line);
-                line = reader.readLine();
-            }
-            reader.close();
-            return lines.toString();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

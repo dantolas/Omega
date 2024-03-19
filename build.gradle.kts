@@ -1,7 +1,8 @@
 plugins{
     application
     java
-    id ("com.github.johnrengelman.shadow") version "8.1.1"
+	id("org.springframework.boot") version "3.2.3"
+	id("io.spring.dependency-management") version "1.1.4"
 }
 
 
@@ -16,29 +17,30 @@ repositories{
 }
 
 dependencies{
-    implementation("mysql:mysql-connector-java:8.0.33")
-     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.10.1")
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+dependencyManagement {
+  imports {
+      mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+  }
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
 }
 
 tasks {
-  withType<Jar> {
-        manifest {
-            attributes["Main-Class"] = "com.kuta.Main" 
-        }
-        configurations["compileClasspath"].forEach { file: File ->
-        from(zipTree(file.absoluteFile))
+    withType<JavaCompile>{
+        options.compilerArgs.add("-parameters")
     }
+    bootJar{
+        archiveBaseName.set("boot-app")
+        destinationDirectory.set(file("./"))
     }
-
-    shadowJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveBaseName.set("postman")
-    destinationDirectory.set(File("./"))
-    mergeServiceFiles()
-    manifest {
-        attributes("Main-Class" to "com.kuta.Main")
-    }
-  }
 }
 
 // Pass default system input to gradle run (Default input stream)

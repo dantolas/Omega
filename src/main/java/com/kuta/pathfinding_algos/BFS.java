@@ -5,29 +5,44 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 
 /**
- * BFS
+ * An implementation of the BFS algorhitm, providic static functionality to search grids
+ *
  */
 public abstract class BFS {
 
 
-    public static List<XYNode> findCompletePath(String[][] charMatrix){
+    public static List<XYNode> findCompletePathChain(String[][] charMatrix,String[] chars){
 
-        List<XYNode> completePath = new ArrayList<>();
-        for(int i = 0; i < countXs(charMatrix); i++){
+        if(chars.length != 3){
+            return null;
         }
 
-        return null;
+        List<XYNode> lootPositions = new ArrayList<>();;
+        List<XYNode> completePath = new ArrayList<>();
+        List<XYNode> newPath = new ArrayList<>();
+        XYNode start = findPosition(charMatrix,chars[0]);
+        while(true){
+            newPath = findClosest(charMatrix, start.x, start.y,chars[2],lootPositions);
+            if(newPath.size()==0)break;
+            completePath.addAll(newPath);
+            start = newPath.getLast();
+            lootPositions.add(start);
+        }
+        newPath = findClosest(charMatrix,start.x,start.y,chars[1],lootPositions);
+        completePath.addAll(newPath);
+        return completePath;
     }
-    public static List<XYNode> findClosestX(String[][] charMatrix,int startX,int startY){
+
+    public static List<XYNode> findClosest(String[][] charMatrix,int startX,int startY,String lootCharacter, List<XYNode> ignoreList){
         Queue<Integer> rowq = new LinkedList<>();
         Queue<Integer> colq = new LinkedList<>();
         int rows = charMatrix.length;
         int cols = charMatrix[0].length;
         boolean[][] visited = new boolean[rows][cols];
+        boolean[][] inQ = new boolean[rows][cols];
         visited[startX][startY] = true;
 
         int moves = 0;
@@ -46,20 +61,19 @@ public abstract class BFS {
         int col;
         int checkX;
         int checkY;
+        ArrayList<XYNode> path = new ArrayList<>();
         while(rowq.size() > 0){
             row = rowq.poll();
             col = colq.poll();
             XYNode parent = new XYNode(row,col);
             visited[row][col] = true;
-            if(charMatrix[row][col].equals("x")){
-                System.out.println("Finished, path found in :"+moves+" moves");
-                System.out.println("ENDPOINT:"+row+" "+col);
-                ArrayList<XYNode> path = new ArrayList<>();
+            if(charMatrix[row][col].equals(lootCharacter) && !ignoreList.contains(parent)){
+
                 for(XYNode at = new XYNode(row,col); at != null; at = parentXYNodes.get(at)){
                     path.add(at);
                 }
-                System.out.println("Path length:"+path.size());
-                return path;
+                path = new ArrayList<>(path.reversed());
+                break;
             }
             for(int i = 0; i < 4; i++){
                 checkX = row+rowDirections[i];
@@ -69,8 +83,10 @@ public abstract class BFS {
                 if(charMatrix[checkX][checkY].equals("#")) continue;
                 if(visited[checkX][checkY]) continue;
 
+                if(inQ[checkX][checkY]) continue;
                 rowq.add(checkX);
                 colq.add(checkY);
+                inQ[checkX][checkY] = true;
                 XYNode child = new XYNode(checkX,checkY);
                 parentXYNodes.put(child, parent);
                 nodesNextLayer ++;
@@ -82,7 +98,7 @@ public abstract class BFS {
             nodesNextLayer = 0;
             moves++;
         }
-        return new ArrayList<>();
+        return path;
     }
 
     public static int countXs(String[][] charMatrix){
@@ -94,11 +110,22 @@ public abstract class BFS {
         }
         return counter;
     };
-    
-    public static int[] findStart(String[][] charMatrix){
+
+    public static List<XYNode> getXs(String[][] charMatrix){
+        List<XYNode> positions = new ArrayList<>();
         for (int i = 0; i < charMatrix.length; i++) {
             for(int j = 0; j < charMatrix[i].length; j++){
-                if(charMatrix[i][j].equals("S")) return new int[]{i,j};
+                if(!charMatrix[i][j].equalsIgnoreCase("x")) continue;
+                positions.add(new XYNode(i, j));
+            }
+        }
+        return positions;
+    }
+    
+    public static XYNode findPosition(String[][] charMatrix,String startChar){
+        for (int i = 0; i < charMatrix.length; i++) {
+            for(int j = 0; j < charMatrix[i].length; j++){
+                if(charMatrix[i][j].equals(startChar)) return new XYNode(i,j);
             }
         }
         return null;
