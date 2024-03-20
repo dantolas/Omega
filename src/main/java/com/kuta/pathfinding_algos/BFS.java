@@ -14,7 +14,7 @@ import java.util.Queue;
 public abstract class BFS {
 
 
-    public static List<XYNode> findCompletePathChain(String[][] charMatrix,String[] chars){
+    public static List<XYNode> findCompletePathChain(String[][] charMatrix,String... chars){
 
         if(chars.length != 3){
             return null;
