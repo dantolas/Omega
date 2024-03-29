@@ -1,4 +1,4 @@
-package com.kuta.web;
+package com.kuta.app.controllers;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,8 +48,7 @@ public class ApiController {
             inputMatrix[curr.x][curr.y] = "o";
         }
         MatrixPrint.printCharMatrix(inputMatrix);
-        ResponseModel response = new ResponseModel(true,10,10,path,inputMatrix);
-        return response;
+        return "";
     }
 
     @ResponseBody

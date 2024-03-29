@@ -18,9 +18,11 @@ repositories{
 
 dependencies{
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation ("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("mysql:mysql-connector-java:8.0.33")
 }
 
 dependencyManagement {
