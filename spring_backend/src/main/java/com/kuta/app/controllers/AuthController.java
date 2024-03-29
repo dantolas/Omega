@@ -20,20 +20,22 @@ import com.kuta.db.ConnectorInitException;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private record LoginData(String usernameOrEmail,String password){}
+    private record LoginData(String login,String password){}
     private record LoginResponse(boolean success,String sessionId,String failReason){}
     @PostMapping(
         value = "login",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+        consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE,
+        },
+        produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE}
     )
-    public LoginResponse login(@RequestBody LoginData login){
-        if(!LoginService.validateLogin(login.usernameOrEmail(),login.password())){
-            return new LoginResponse(false,null,"Invalid login credentials");
+    public LoginResponse login(@RequestBody LoginData login) throws ConnectorInitException, SQLException{
+        if(!LoginService.validateLogin(login.login(),login.password())){
+            return new LoginResponse(false,null,"Invalid login credentials.");
         }
         return new LoginResponse(true,"",null);
     };
-
 
     private record SignupData(String username, String email, String password){}
 

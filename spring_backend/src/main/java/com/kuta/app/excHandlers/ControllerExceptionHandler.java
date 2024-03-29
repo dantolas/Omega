@@ -14,7 +14,9 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<?> handle(NullPointerException e){
         
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request was sent");
+        System.out.println(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request was sent."
+            +"Make sure your request is in the proper format");
     }
     
 }

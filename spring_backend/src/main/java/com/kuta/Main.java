@@ -1,14 +1,14 @@
 package com.kuta;
 
-import java.sql.SQLException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.kuta.db.ConnectorInitException;
+import com.kuta.app.configurations.ConfigFileModel;
 import com.kuta.db.DBAPI;
 import com.kuta.db.DBConnector;
-import com.kuta.db.UserModel;
 
 /**
  * Main
@@ -16,15 +16,37 @@ import com.kuta.db.UserModel;
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class,args);
-        DBConnector connector = new DBConnector().setUsername("charming").setPassword("kuta")
-        .setConnectionUrl(DBConnector.Prefix.MYSQL, "localhost","omega");
-        connector.init();
-        DBAPI.setConnector(connector);
         try {
-            System.out.println(DBAPI.getAllUsers());
-        } catch (ConnectorInitException | SQLException e) {
-            e.printStackTrace();
+            ConfigFileModel config = 
+            ConfigFileModel.fromFile(System.getProperty("user.dir")+"/conf/config.json");
+            config.setup();
+            DBConnector dbc = new DBConnector()
+            .setPassword(config.databasePassword)
+            .setUsername(config.databaseUser)
+            .setConnectionUrl(DBConnector.Prefix.MYSQL, config.databaseHost, config.databaseName);
+            int attempts = 3;
+            while(!dbc.init()){
+                if(attempts <= 0) throw new Exception();
+                config = 
+                ConfigFileModel.fromFile(System.getProperty("user.dir")+"/conf/config.json");
+                config.setup();
+                dbc = new DBConnector()
+                .setPassword(config.databasePassword)
+                .setUsername(config.databaseUser)
+                .setConnectionUrl(DBConnector.Prefix.MYSQL, config.databaseHost, config.databaseName);
+                attempts --;
+            }
+            DBAPI.setConnector(dbc);
+            SpringApplication.run(Main.class,args);
+        } catch (FileNotFoundException e) {
+            System.out.println("The application couldn't start, because the config file is missing.");
+            System.out.println("Please ensure the file is present in project source files as /conf/config.json");
+        } catch (IOException e) {
+            System.out.println("The application couldn't start, because it couldn't read the config file.");
+            System.out.println("Please ensure the application has read permissions for the /conf/config.json file");
+        } catch (Exception e) {
+            System.out.println("The application couldn't start, because connection to database couldn't be established");
+            System.out.println("Please check your configuration settings and ensure they match your database settings");
         }
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public abstract class DBAPI {
 
-    private static  DBConnector connector;
+    public static  DBConnector connector;
 
     public static void setConnector(DBConnector connector){
         DBAPI.connector=connector;
