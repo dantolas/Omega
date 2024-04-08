@@ -21,6 +21,7 @@ dependencies{
     implementation ("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation ("org.springframework.session:spring-session-core")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("mysql:mysql-connector-java:8.0.33")
 }

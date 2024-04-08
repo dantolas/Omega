@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,7 +15,7 @@ import com.google.gson.GsonBuilder;
  * AppConfing
  */
 @Configuration
-public class AppConfig {
+public class GeneralConfig {
 
     @Bean
     public Gson gson(){
@@ -23,5 +26,4 @@ public class AppConfig {
     public PasswordEncoder encoder(){
         return new BCryptPasswordEncoder(8);
     }
-    
 }

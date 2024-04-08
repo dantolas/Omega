@@ -4,13 +4,27 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { AlertCircle } from 'lucide-vue-next'
+import {ref} from "vue"
+import LoginForm from '@/components/LoginForm.vue'
+import RegisterForm from '@/components/RegisterForm.vue'
+
+const something = ref(false);
 </script>
 
 <template>
-    <div class="flex items-center justify-center p-3 h-screen mx-auto">
+    <div class="flex flex-col items-center justify-center p-3 h-screen mx-auto">
+        <Alert class="w-1/2" variant="destructive" v-if="something">
+            <AlertCircle class="w-4 h-4" />
+            <AlertTitle >Placeholder</AlertTitle>
+            <AlertDescription>
+                Some error has clearly occured
+            </AlertDescription>
+        </Alert>
         <div id="form-wrapper" class="h-1/2 p-3">
             <Tabs default-value="login" class="w-[400px] ">
-                <TabsList class="relative flex p-2">
+                <TabsList class="relative flex p-2" >
                     <TabsTrigger value="login" class="w-1/2 rounded transition ease-in-out delat-150" >
                         login
                     </TabsTrigger>
@@ -19,7 +33,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="login">
-
                     <Card class="m-auto p-2 ">
                         <CardHeader>
                             <CardTitle class="text-2xl">
@@ -30,25 +43,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
                             </CardDescription>
                         </CardHeader>
                         <CardContent class="grid gap-4">
-                            <div class="grid gap-2">
-                                <Label for="email">Email/Username</Label>
-                                <Input id="email" type="email" placeholder="user@mail.com" required />
-                            </div>
-                            <div class="grid gap-2">
-                                <Label for="password">Password</Label>
-                                <Input id="password" type="password" placeholder="****" />
-                            </div>
+                            <LoginForm/>
                         </CardContent>
                         <CardFooter>
-                            <Button class="w-full">
-                                Log in
-                            </Button>
+                            <CardDescription>Enjoy your stay :]</CardDescription>
                         </CardFooter>
                     </Card>
                 </TabsContent>
-
                 <TabsContent value="signup">
-
                     <Card class="m-auto p-2">
                         <CardHeader>
                             <CardTitle class="text-2xl">
@@ -59,27 +61,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
                             </CardDescription>
                         </CardHeader>
                         <CardContent class="grid gap-4">
-                            <div class="grid gap-2">
-                                <Label for="username">Username</Label>
-                                <Input id="username" type="username" placeholder="Hugh Jazs" required />
-                            </div>
-                            <div class="grid gap-2">
-                                <Label for="email">Email</Label>
-                                <Input id="email" type="email" placeholder="user@email.com" required />
-                            </div>
-                            <div class="grid gap-2">
-                                <Label for="password">Password</Label>
-                                <Input id="password" type="password"placeholder="****"  required />
-                            </div>
-                            <div class="grid gap-2">
-                                <Label for="confirm_password">Confirm password</Label>
-                                <Input id="confirm_password" type="password"placeholder="****"  required />
-                            </div>
+                            <RegisterForm/>
                         </CardContent>
                         <CardFooter>
-                            <Button class="w-full">
-                                Signup
-                            </Button>
+                            <CardDescription>Enjoy your stay :]</CardDescription>
                         </CardFooter>
                     </Card>
                 </TabsContent>
@@ -90,57 +75,4 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 </template>
 
 <style >
-
-input[type="radio"]{
-    display: none;
-}
-.slide-controls{
-
-    display: flex;
-    height: 50px;
-    width: 100%;
-    margin: 30px 0 10px 0;
-    justify-content: space-between;
-    border-radius: 5px;
-    overflow: hidden;
-    position: relative;
-}
-#signup:checked ~ .slide-tab{
-    left: 50%;
-}
-
-#signup:checked ~ .signup{
-    color: #79e7c3;
-}
-
-
-#signup:checked ~ .login{
-    color: white;
-}
-.slide-controls .slide-tab{
-    position: absolute;
-    height: 100%;
-    width: 50%;
-    left: 0;
-    z-index: 0;
-    background-color: #202c55;
-    border-radius: 5px;
-
-    transition: width 0.2s ease;
-}
-.slide-controls .signup{
-    color: #f2f2f2;
-}
-.slide-controls .slide{
-    height: 100%;
-    width: 100%;
-    font-size: 18px;
-    font-weight: 550;
-    text-align: center;
-    line-height: 47px;
-    cursor: pointer;
-    z-index: 1;
-    color: #79e7c3;
-    transition: all 0.6s ease;
-}
 </style>

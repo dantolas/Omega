@@ -14,7 +14,6 @@ import com.google.gson.Gson;
 import com.kuta.pathfinding_algos.BFS;
 import com.kuta.pathfinding_algos.XYNode;
 import com.kuta.util.IO;
-import com.kuta.util.MatrixPrint;
 
 /**
  * ApiController
@@ -47,8 +46,7 @@ public class ApiController {
             if(!inputMatrix[curr.x][curr.y].equalsIgnoreCase(".")) continue;
             inputMatrix[curr.x][curr.y] = "o";
         }
-        MatrixPrint.printCharMatrix(inputMatrix);
-        return "";
+        return inputMatrix; 
     }
 
     @ResponseBody
