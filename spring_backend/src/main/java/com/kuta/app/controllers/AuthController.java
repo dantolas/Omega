@@ -36,8 +36,6 @@ public class AuthController {
     private record OkLoginResponse(String status){}
     private record BadLoginResponse(String status,String error){}
 
-    
-
     @GetMapping(
         value = "authenticated",
         produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE}

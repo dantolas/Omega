@@ -13,10 +13,6 @@ const isAuthenticated = async ():boolean =>{
             return true;
         })
         .catch((error) =>{
-            if(error.code !== "ERR_BAD_REQUEST"){
-                console.log("Error was caught")
-                console.log(error)
-            }
             return false;
         })
     return response;
@@ -42,9 +38,6 @@ const login = async (username,password):string =>{
             return data;
         })
         .catch((error) =>{
-            console.log("Error was caught")
-            console.log(error.message)
-            console.log(error.response)
             return null;
         })
     return response;
@@ -66,7 +59,6 @@ const signup = async (username:string,email:string,password:string):string =>{
 
         })
         .catch((error) =>{
-            console.log("Error was caught")
             return {status:"failed",error:"unknown"}
         })
     return response;

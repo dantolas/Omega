@@ -16,29 +16,31 @@ import { Input } from '@/components/ui/input'
 import { vAutoAnimate } from '@formkit/auto-animate/vue'
 import {onMounted, ref} from "vue"
 import axios from 'axios';
-import {useRouter,useRoute} from 'vue-router'
 import {login} from "@/util/auth"
     
-const router = useRouter();
-    
 const formSchema = toTypedSchema(z.object({
-    login: z.string().min(2).max(50),
-    password: z.string().min(4).max(50)
+    login: z.string().min(4).max(30),
+    password: z.string().min(4).max(30)
 }))
 
 const form = useForm({
   validationSchema: formSchema,
 })
 
+const emit = defineEmits(['loginResponse']);
+
 const onSubmit =  form.handleSubmit(async (values) => {
-    console.log('Form submitted!', values)
     const response = await login(values.login,values.password);
-    if(!response) {
-        alert("Something went wrong:" + response.status);
+    if(!response || !response.status) {
+        emit('loginResponse',"general_error");
         return
     }
     if(response.status ==="ok"){
-        router.push("/home");
+        emit('loginResponse',"ok");
+        return
+    }
+    if(response.status === "failed"){
+        emit('loginResponse','invalid_credentials');
         return
     }
 })

@@ -24,7 +24,7 @@ const formSchema = toTypedSchema(
         login: z.string().min(2).max(50),
         email: z.string().email(),
         password: z.string().min(8).max(50),
-        retype_password:z.string().min(8).max(50)
+        retype_password:z.string().max(50)
     }).refine((values) => values.password === values.retype_password,{
             message:"Passwords don't match",
             path:["retype_password"]
