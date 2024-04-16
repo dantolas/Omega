@@ -10,7 +10,6 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import { Separator } from '@/components/ui/separator'
 import {
     HoverCard,
     HoverCardContent,
@@ -28,11 +27,6 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 defineOptions({ inheritAttrs: false })
 const props = defineProps({
     matrix:{
@@ -45,57 +39,11 @@ const props = defineProps({
 });
 const rows = ref(props.matrix.grid.length);
 const cols = ref(props.matrix.grid[0].length);
-const getId = (symbol:String):String =>{
-    switch (symbol) {
-        case "#":
-            return "hash";
-            break;
-
-        case ".":
-            return "path";
-            break;
-        case "S":
-            return "start";
-            break;
-        case "E":
-            return "end";
-            break;
-        case "S/E":
-            return "startend"
-            break
-        default:
-            return "hash";
-            break;
-    }
-};
 </script>
 
 <template>
-    <div id="controls">
-        <Popover>
-            <PopoverTrigger>
-                <div class="flex">
-                    <span class="text-red-600 font-bold p-[2px] bg-red-300">C</span>
-                    <span class="text-green-600 font-bold p-[2px] bg-green-300">O</span>
-                    <span class="text-blue-600 font-bold p-[2px] bg-blue-300">L</span>
-                    <span class="text-yellow-600 p-[2px] font-bold bg-yellow-300">O</span>
-                    <span class="text-pink-600 p-[2px] font-bold bg-pink-300">R</span>
-                    <span class="text-purple-600 p-[2px] font-bold bg-purple-300">S</span>
-                </div>
-            </PopoverTrigger>
-            <PopoverContent>
-                <div class="flex">
-                    <pre class="">#</pre>
-                    <Separator  :orientation="'vertical'" :decorative="true" />
-                    <p class="">Path</p>
-                </div>
-                <Separator :decorative="true" />
-            </PopoverContent>
-        </Popover>    
-    </div>
-
-    <div id="tablewrapper" class="w-full p-5">
-        <transition>
+        <div id="tablewrapper" class="w-full p-5">
+            <transition>
             <Table key="1" v-if="rows > 0 && cols > 0">
                     <TableCaption>{{rows}} x {{cols}}</TableCaption>
                     <TableHeader>
@@ -115,7 +63,7 @@ const getId = (symbol:String):String =>{
                                 <transition-group>
                                     <TableCell  
                                         v-for="y in cols" :key="y"
-                                    :id="getId(matrix.grid[x-1][y-1])"
+                                         :id="if(true) 'x'"
                                         :innerText="matrix.grid[x-1][y-1]"
                                         class="hover:bg-muted border 
                                         border-zinc-50 text-center transition-[opacity,colors]
@@ -162,8 +110,4 @@ const getId = (symbol:String):String =>{
 .v-leave-to {
   opacity: 0;
 }
-
-#hash{
-}
-
 </style>

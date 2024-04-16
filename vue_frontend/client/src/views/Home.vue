@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Toaster from '@/components/ui/toast/Toaster.vue'
+import { useToast } from '@/components/ui/toast/use-toast'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,7 +16,9 @@ import axios from 'axios';
 import {onMounted, ref} from "vue"
 import { RouterLink } from 'vue-router'
 import MatrixBuilder from '@/components/MatrixBuilder.vue'
-const components: { title: string, href: string, description: string }[] = [
+import MatrixVisualizer from '@/components/MatrixVisualizer.vue'
+const { toast } = useToast()
+const navlinks: { title: string, href: string, description: string }[] = [
   {
     title: 'API Documentation',
     href: '/api/docs',
@@ -29,14 +33,37 @@ const components: { title: string, href: string, description: string }[] = [
   },
 ]
 
+const defaultBuilderRows = ref(10);
+const defaultBuilderCols = ref(10);
+
+const builtMatrix = ref({
+    grid:[[]],
+    startX:Number,
+    startY:Number,
+    endX:Number,
+    endY:Number
+}
+);
+
+const builtMatrixJson:String = ref("");
+
 const caughtBuild = (build) =>{
     console.log("Event caught");
     console.log(build);
+    toast({
+        title:"Matrix built!",
+        description: "Check it out in the visualizer."
+
+    });
+    builtMatrix.value.grid = build.matrix;
+    builtMatrixJson.value= JSON.stringify(build.matrix);
 }
 </script>
 
 
 <template>
+
+    <Toaster :duration="3000" />
     <NavigationMenu class="m-1">
         <NavigationMenuList>
             <NavigationMenuItem>
@@ -44,13 +71,13 @@ const caughtBuild = (build) =>{
                 <NavigationMenuContent class="">
                     <NavigationMenuLink class="">
                         <ul class="">
-                            <li v-for="component in components" class="gap-2 w-full">
-                                <a :href="component.href"
+                            <li v-for="link in navlinks" class="gap-2 w-full">
+                                <a :href="link.href"
                                     class="flex flex-col gap-1 
                                     w-full text-wrap p-1  hover:bg-muted"
                                 >
-                                    <h2 class="text-orange-400 p-1 w-max">{{component.title}}</h2>
-                                    <span class="p-1 w-max">{{component.description}}</span>
+                                    <h2 class="text-orange-400 p-1 w-max">{{link.title}}</h2>
+                                    <span class="p-1 w-max">{{link.description}}</span>
                                 </a>
                             </li>
                         </ul>
@@ -61,19 +88,26 @@ const caughtBuild = (build) =>{
     </NavigationMenu>
 
     <div>
-            <Tabs default-value="builder" orientation="horizontal" class="flex-col justify-center items-center">
-                <TabsList class=" w-1/2">
-                    <TabsTrigger value="builder" class="rounded w-full" >
+            <Tabs default-value="builder" orientation="horizontal" class="">
+            <div class="w-fit mx-auto">
+                <TabsList class="w-full">
+                    <TabsTrigger value="builder" class="rounded w-1/2" >
                         builder
                     </TabsTrigger>
-                    <TabsTrigger value="visualizer" class="rounded w-full ">
+                    <TabsTrigger value="visualizer" class="rounded w-1/2">
                         visualizer
                     </TabsTrigger>
                 </TabsList>
+            </div>
                 <TabsContent value="builder" >
-                <MatrixBuilder @build="caughtBuild" :x="10" :y="10"/>
+                <MatrixBuilder @build="caughtBuild" :x="defaultBuilderRows" :y="defaultBuilderCols"
+                    :lastMatrixJson="builtMatrixJson"
+                />
                 </TabsContent>
                 <TabsContent value="visualizer">
+                <MatrixVisualizer :matrix="builtMatrix" 
+                    class="p-3"
+                />
                 </TabsContent>
 
             </Tabs>

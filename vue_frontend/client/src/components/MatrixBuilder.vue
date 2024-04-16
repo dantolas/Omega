@@ -27,11 +27,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-
 const props = defineProps({
     x:Number,
-    y:Number
+    y:Number,
+    lastMatrixJson:{
+        type:String,
+        default:""
+    }
 });
+
 const rows = ref(props.x);
 const cols = ref(props.y);
 
@@ -42,6 +46,17 @@ const start = {
     x:null,
     y:null,
 };
+const alertTitle = ref("Default");
+const alertDescription = ref("Default");
+const showAlert = ref(false);
+const hideAlert = ()=>{
+    showAlert.value = false;
+}
+const popupAlert = (title,description) =>{
+    showAlert.value = true;
+    alertTitle.value = title;
+    alertDescription.value = description;
+}
 const startPlaced = ():Boolean =>{
     if(!start.x || !start.y) return false;
     for(const cell of getAllCells()){
@@ -66,26 +81,28 @@ const switchMouseHold:void = (value,e) =>{
     if(value == false) return;
 
     if(!characterSelected.value) characterSelected.value = "#";
-    placeCharacter(e.target,characterSelected.value);
+    placeCharacter(e.target,characterSelected.value,true);
 }
 const pointerOverCell = (e)=>{
     e.preventDefault();
     if(hold.value){
         if(!characterSelected.value) characterSelected.value = "#";
-        placeCharacter(e.target,characterSelected.value);
+        placeCharacter(e.target,characterSelected.value,true);
     }
 }
 
-const setCharacter:void = (element,text) =>{
-    element.style.opacity = 0;
-    element.style.backgroundColor = "hsl(var(--primary) / 0.9)";
+const setCharacter:void = (element,text:String,withColor:Boolean) =>{
+    if(withColor) element.style.backgroundColor = "hsl(var(--primary) / 0.9)";
+    element.style.opacity = 0.2
         setTimeout(() => {
         element.innerText = text;
         element.style.opacity = 1;
         element.style.backgroundColor = "";
     }, 200);
+    if(text === "x") element.style.color = "tomato";
+    else element.style.color = "";
 }
-const placeCharacter:void = (cell,value) =>{
+const placeCharacter:void = (cell,value,withColor:Boolean) =>{
     if(!value){
         value = "#";
     }
@@ -93,11 +110,11 @@ const placeCharacter:void = (cell,value) =>{
     const cellX = cell.getAttribute("x");
     const cellY = cell.getAttribute("y");
     if(value === "S"){
-        placeStart(cellX,cellY,cell)
+        placeStart(cellX,cellY,cell,withColor)
         return;
     }
     if(value === "E"){
-        placeEnd(cellX,cellY,cell);
+        placeEnd(cellX,cellY,cell,withColor);
         return;
     }
 
@@ -109,21 +126,21 @@ const placeCharacter:void = (cell,value) =>{
         end.x = null;
         end.y = null;
     }
-    setCharacter(cell,value);
+    setCharacter(cell,value,withColor);
 }
 
-const placeStart = (cellX,cellY,cell):void =>{
+const placeStart = (cellX,cellY,cell,withColor:Boolean):void =>{
     if(start.x !=null && start.y!=null){
         const cells = getAllCells();
         for(let i = 0; i < cells.length; i++){
             if(cells[i].getAttribute("x")!==start.x||cells[i].getAttribute("y")!==start.y) continue;
             if(cells[i].getAttribute("x")===end.x&&cells[i].getAttribute("y")===end.y){
-                setCharacter(cells[i],"E");
-                start.placed = false;
+                setCharacter(cells[i],"E",withColor);
+                cell.style.color = "orange";
                 break;
             };
-            setCharacter(cells[i],"#");
-            start.placed = false;
+            setCharacter(cells[i],"#",withColor);
+            cells[i].style.color = "";
             break;
         }
     }
@@ -131,23 +148,27 @@ const placeStart = (cellX,cellY,cell):void =>{
     start.y = cellY;
     showAlert.value = false;
     if(cellX == end.x && cellY == end.y){
-        setCharacter(cell,"S/E");
+        setCharacter(cell,"S/E",withColor);
+        cell.style.color = "orange";
         return;
     }
-    setCharacter(cell,"S");
+    setCharacter(cell,"S",withColor);
+    cell.style.color= "orange";
     return;
 }
 
-const placeEnd = (cellX,cellY,cell):void =>{
+const placeEnd = (cellX,cellY,cell,withColor:Boolean):void =>{
     if(end.x != null && end.y != null){
         const cells = getAllCells();
         for(let i = 0; i < cells.length; i++){
             if(cells[i].getAttribute("x")!==end.x||cells[i].getAttribute("y")!==end.y) continue;
             if(cells[i].getAttribute("x")===start.x&&cells[i].getAttribute("y")===start.y){
-                setCharacter(cells[i],"S");
+                setCharacter(cells[i],"S",withColor);
+                cell.style.color = "orange";
                 break;
             };
-            setCharacter(cells[i],"#");
+            setCharacter(cells[i],"#",withColor);
+            cells[i].style.color = "";
             break;
         }
 
@@ -156,10 +177,12 @@ const placeEnd = (cellX,cellY,cell):void =>{
     end.y = cellY;
     showAlert.value = false;
     if(cellX == start.x && cellY == start.y){
-        setCharacter(cell,"S/E");
+        setCharacter(cell,"S/E",withColor);
+        cell.style.color = "orange";
         return;
     }
-    setCharacter(cell,"E");
+    setCharacter(cell,"E",withColor);
+    cell.style.color = "orange";
     return;
 }
 
@@ -212,7 +235,6 @@ const buildMatrix = ():void =>{
         endX:end.x,
         endY:end.y
     }
-    console.log("Emmiting build");
     emit('build',build);
 };
 
@@ -221,8 +243,10 @@ const  copyMatrix = async ()=>{
 }
 
 const showPasteBox:Boolean = ref(false);
-const pasteMatrix = async ()=>{
-    const json = document.querySelector("#pasteInput").value;
+const getPasteValue = ():String =>{
+    return document.querySelector('#pasteInput').value;
+}
+const pasteMatrix = (json:String):void =>{
     try {
         const matrix = JSON.parse(json);
         if(!(matrix instanceof Array) || !matrix.length || !(matrix[0] !instanceof Array)){
@@ -232,53 +256,41 @@ const pasteMatrix = async ()=>{
         const pastecols = matrix[0].length;
         matrix.forEach((row) =>{
             if(row.length != pastecols){
+                showPasteBox.value = false;
                 popupAlert("Provided JSON is not a Matrix","Not every row is the same length,"+
                     "we can only solve a Grid/Matrix for you.");
                 return;
             }
         });
 
-        setTimeout(() => {
-            rows.value = pasterows;
-            cols.value  = pastecols;
-            
-        }, 300);
+        rows.value = pasterows;
+        cols.value  = pastecols;
         setTimeout(() => {
             const rowsArray = getRowsNodes();
             
             for(let i = 0; i < rows.value; i++){
                 for(let j = 0; j < cols.value; j++){
-                    placeCharacter(rowsArray[i][j],matrix[i][j]);
+                    placeCharacter(rowsArray[i][j],matrix[i][j],false);
                 }
             }
 
-        }, 200);
+        }, 100);
     } catch (error) {
-        console.log(error);
         showPasteBox.value = false;
         popupAlert("Invalid JSON","Please paste in a valid JSON representation of your"+
         " desired character matrix");
     }
 }
+const lastMatrix = ref(props.lastMatrixJson);
+if(lastMatrix.value) pasteMatrix(lastMatrix.value);
 
-const hideAlert = ()=>{
-    showAlert.value = false;
-}
-const popupAlert = (title,description) =>{
-    showAlert.value = true;
-    alertTitle.value = title;
-    alertDescription.value = description;
-}
-const alertTitle = ref("Default");
-const alertDescription = ref("Default");
-const showAlert = ref(false);
 </script>
 
 <template>
     <div class="w-full relative p-2 flex flex-row rounded border">
         <div id="tablewrapper" class="w-3/4">
             <transition>
-                <Table  @pointerup="switchMouseHold(false,$event)">
+                <Table  @pointerup="switchMouseHold(false,$event)" class="p-1">
                     <TableCaption>{{rows}} x {{cols}}</TableCaption>
                     <TableHeader>
                         <TableRow class="">
@@ -402,7 +414,11 @@ const showAlert = ref(false);
                         <PopoverContent>
                             <Input id="pasteInput" type="text"></Input>
                             <Label for="paste" class="text-wrap text-xs">Submit Character Matrix in JSON format</Label>
-                            <Button name="paste" @click="(event)=>{showPasteBox=!showPasteBox;pasteMatrix()}"
+                            <Button name="paste" @click="(event)=>{
+                                showPasteBox=!showPasteBox;
+                                const json = getPasteValue();
+                                pasteMatrix(json);
+                            }"
                                 class="mt-3 font-bold ">Paste</Button>
                         </PopoverContent>
                     </Popover>

@@ -20,7 +20,6 @@ const alertVariant = ref("");
 
 const router = useRouter();
 const handleResponse = (response:String):void =>{
-    console.log(response)
     if(response === "invalid_credentials"){
         alertTitle.value = "Invalid login credentials";
         alertDescription.value = "Make sure your login and password are correct";
