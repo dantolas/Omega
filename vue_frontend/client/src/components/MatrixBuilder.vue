@@ -328,7 +328,8 @@ if(lastMatrix.value) pasteMatrix(lastMatrix.value);
             <div class="relative w-full">
                 <div class="flex flex-row p-1">
                     <HoverCard >
-                        <HoverCardTrigger class="hover:cursor-help w-1/2">Rows</HoverCardTrigger>
+                        <HoverCardTrigger class="flex gap-2 hover:cursor-help w-1/2">Rows
+                        </HoverCardTrigger>
                         <HoverCardContent>
                             Amount of rows on the Y axis.
                         </HoverCardContent>
@@ -340,7 +341,8 @@ if(lastMatrix.value) pasteMatrix(lastMatrix.value);
             <div class="relative w-full">
                 <div class="flex flex-row p-1">
                     <HoverCard >
-                        <HoverCardTrigger class="hover:cursor-help w-1/2">Cols</HoverCardTrigger>
+                        <HoverCardTrigger class="flex gap-2 hover:cursor-help w-1/2">Cols
+                        </HoverCardTrigger>
                         <HoverCardContent>
                             Amount of columns on the X axis.
                         </HoverCardContent>
@@ -350,7 +352,9 @@ if(lastMatrix.value) pasteMatrix(lastMatrix.value);
             </div>
             <div id="character">
                 <HoverCard >
-                    <HoverCardTrigger class="hover:cursor-help w-1/2">Character</HoverCardTrigger>
+                    <HoverCardTrigger class="flex gap-2 hover:cursor-help w-1/2">Character
+                            <span class="block underline text-sm text-muted-foreground">help</span>
+                    </HoverCardTrigger>
                     <HoverCardContent>
                         <ul>
                             Pick a character and start drawing.

@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/navigation-menu'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import axios from 'axios';
-import {onMounted, ref} from "vue"
+import {onMounted, ref,h} from "vue"
 import { RouterLink } from 'vue-router'
 import MatrixBuilder from '@/components/MatrixBuilder.vue'
 import MatrixVisualizer from '@/components/MatrixVisualizer.vue'
+import { ToastAction } from '@/components/ui/toast'
 const { toast } = useToast()
 const navlinks: { title: string, href: string, description: string }[] = [
   {
@@ -52,12 +53,17 @@ const caughtBuild = (build) =>{
     console.log(build);
     toast({
         title:"Matrix built!",
-        description: "Check it out in the visualizer."
-
+        description: "Check it out in the visualizer.",
+        action: h(ToastAction, {
+            altText: '->',
+        }, {
+                default: () => '->',
+        })
     });
     builtMatrix.value.grid = build.matrix;
     builtMatrixJson.value= JSON.stringify(build.matrix);
 }
+
 </script>
 
 
