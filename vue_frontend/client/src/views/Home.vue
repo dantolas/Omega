@@ -50,7 +50,6 @@ const builtMatrixJson:String = ref("");
 
 const caughtBuild = (build) =>{
     console.log("Event caught");
-    console.log(build);
     toast({
         title:"Matrix built!",
         description: "Check it out in the visualizer.",
@@ -60,9 +59,12 @@ const caughtBuild = (build) =>{
                 default: () => '->',
         })
     });
+    tabsValue.value="visualizer";
     builtMatrix.value.grid = build.matrix;
     builtMatrixJson.value= JSON.stringify(build.matrix);
 }
+
+const tabsValue = ref("builder");
 
 </script>
 
@@ -94,7 +96,7 @@ const caughtBuild = (build) =>{
     </NavigationMenu>
 
     <div>
-            <Tabs default-value="builder" orientation="horizontal" class="">
+            <Tabs default-value="builder" orientation="horizontal" class="" v-model="tabsValue">
             <div class="w-fit mx-auto">
                 <TabsList class="w-full">
                     <TabsTrigger value="builder" class="rounded w-1/2" >

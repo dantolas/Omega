@@ -46,30 +46,6 @@ const props = defineProps({
 });
 const rows = ref(props.matrix.grid.length);
 const cols = ref(props.matrix.grid[0].length);
-const getId = (symbol:String):String =>{
-    switch (symbol) {
-        case "#":
-            return "hash";
-            break;
-
-        case ".":
-            return "path";
-            break;
-        case "S":
-            return "start";
-            break;
-        case "E":
-            return "end";
-            break;
-        case "S/E":
-            return "startend"
-            break
-        default:
-            return "hash";
-            break;
-    }
-};
-
 const colors = ref({
     block:{
         bg:"#000",
@@ -92,6 +68,85 @@ const colors = ref({
         fg:"#fff"
     },
 });
+const getId = (symbol:String):String =>{
+    switch (symbol) {
+        case "#":
+            return "hash";
+            break;
+
+        case ".":
+            return "path";
+            break;
+        case "S":
+            return "start";
+            break;
+        case "E":
+            return "end";
+            break;
+        case "x":
+            return "stop";
+            break;
+        case "S/E":
+            return "startend"
+            break
+        default:
+            return "hash";
+            break;
+    }
+};
+
+const getFg = (symbol:String):String =>{
+    switch (symbol) {
+        case "#":
+            return colors.value.block.fg;
+            break;
+
+        case ".":
+            return colors.value.path.fg;
+            break;
+        case "S":
+            return colors.value.start.fg;
+            break;
+        case "E":
+            return colors.value.end.fg;
+            break;
+        case "x":
+            return colors.value.stop.fg;
+            break;
+        case "S/E":
+            return colors.value.start.fg;
+            break
+        default:
+            return "inherit";
+            break;
+    }
+};
+const getBg = (symbol:String):String =>{
+    switch (symbol) {
+        case "#":
+            return colors.value.block.bg;
+            break;
+
+        case ".":
+            return colors.value.path.bg;
+            break;
+        case "S":
+            return colors.value.start.bg;
+            break;
+        case "E":
+            return colors.value.end.bg;
+            break;
+        case "x":
+            return colors.value.stop.bg;
+            break;
+        case "S/E":
+            return colors.value.start.bg;
+            break
+        default:
+            return "inherit";
+            break;
+    }
+};
 
 </script>
 
@@ -227,10 +282,13 @@ const colors = ref({
                                     v-for="y in cols" :key="y"
                                     :id="getId(matrix.grid[x-1][y-1])"
                                     :innerText="matrix.grid[x-1][y-1]"
-                                    :style="{backgroundColor:colors.stop.bg}"
-                                    class="hover:bg-muted border 
+                                    :style="{
+                                        backgroundColor:getBg(matrix.grid[x-1][y-1]),
+                                        color:getFg(matrix.grid[x-1][y-1])
+                                    }"
+                                    class="hover:cursor-pointer hover:bg-muted border 
                                     border-zinc-50 text-center transition-[opacity,colors]
-                                    duration-300"
+                                        duration-300"
                                     >
                                     </TableCell>
                                 </transition-group>
