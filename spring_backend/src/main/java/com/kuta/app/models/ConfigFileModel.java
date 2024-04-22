@@ -1,4 +1,4 @@
-package com.kuta.app.configurations;
+package com.kuta.app.models;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-const isAuthenticated = async ():boolean =>{
+const isAuthenticated = async ():Promise<boolean>=>{
     axios.defaults.withCredentials = true;
     axios.defaults.withXSRFToken = true;
     const response:boolean = await axios
@@ -12,13 +12,13 @@ const isAuthenticated = async ():boolean =>{
             }
             return true;
         })
-        .catch((error) =>{
+        .catch(() =>{
             return false;
         })
     return response;
 }
 
-const login = async (username,password):string =>{
+const login = async (username,password):Promise<{}>=>{
     const response = await axios
         .post("http://localhost:8080/auth/login",
             {
@@ -37,13 +37,13 @@ const login = async (username,password):string =>{
             }
             return data;
         })
-        .catch((error) =>{
+        .catch(() =>{
             return null;
         })
     return response;
 }
 
-const signup = async (username:string,email:string,password:string):string =>{
+const signup = async (username:string,email:string,password:string)=>{
     const response = await axios
         .post("http://localhost:8080/auth/signup",{
             username:username,
@@ -59,7 +59,7 @@ const signup = async (username:string,email:string,password:string):string =>{
 
         })
         .catch((error) =>{
-            return {status:"failed",error:"unknown"}
+            return {status:"failed",error:error}
         })
     return response;
 }

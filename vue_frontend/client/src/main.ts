@@ -1,17 +1,12 @@
-import { createApp ,Vue} from "vue";
+import { createApp} from "vue";
 import "./assets/index.css";
 import App from "./App.vue";
-import { createRouter, createWebHistory } from "vue-router";
-import {createPinia} from "pinia";
-import VueCookies from 'vue-cookies'
+import { createRouter, createWebHistory,RouteRecordRaw } from "vue-router";
 import {isAuthenticated} from "@/util/auth"
 
 var app = createApp(App);
 
-const pinia = createPinia();
-app.use(pinia);
-
-const routes = [
+const routes:Readonly<RouteRecordRaw[]> = [
     { path: "/", redirect: "/login" },
     { path: "/login", name:"Login", component: () => import('@/views/Login.vue')},
     { path: "/home", name:"Home", component: () => import('@/views/Home.vue')},
@@ -22,13 +17,12 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
 });
-import {useAuthStore} from "@/store/authStore"
 
 const publicPages = [
     "api"
 ]
-router.beforeEach(async (to, from) => {
-    if(publicPages.includes(to)) return to;
+router.beforeEach(async (to,) => {
+    if(publicPages.includes(to.toString())) return to;
     let logged:boolean = await isAuthenticated();
     if(to.name === 'Login' && logged){
         return { name:"Home"}
@@ -39,6 +33,5 @@ router.beforeEach(async (to, from) => {
     }
 })
 app.use(router);
-app.use(VueCookies,{expires:"35min"});
 app.mount("#app");
 

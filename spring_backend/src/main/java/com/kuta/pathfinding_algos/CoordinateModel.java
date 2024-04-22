@@ -5,12 +5,9 @@ import java.util.Objects;
 /**
  * XYNode
  */
-public class XYNode {
+public record CoordinateModel(int x, int y) {
 
-        public int x;
-        public int y;
-
-        public XYNode(int x, int y){
+        public CoordinateModel(int x, int y){
             this.x = x;
             this.y = y;
         }
@@ -18,8 +15,8 @@ public class XYNode {
         @Override
         public boolean equals(Object obj) {
             if(obj == this) return true;
-            if(obj == null || !(obj instanceof XYNode)) return false;
-            XYNode that = (XYNode)obj;
+            if(obj == null || !(obj instanceof CoordinateModel)) return false;
+            CoordinateModel that = (CoordinateModel)obj;
             if(that.x == x && that.y == y) return true;
             return false;
         }

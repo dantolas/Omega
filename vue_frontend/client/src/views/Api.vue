@@ -3,16 +3,11 @@
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from '@/components/ui/navigation-menu'
-import axios from 'axios';
-import {onMounted, ref} from "vue"
-
 </script>
 
 
@@ -23,7 +18,7 @@ import {onMounted, ref} from "vue"
                 <NavigationMenuTrigger>API</NavigationMenuTrigger>
                 <NavigationMenuContent>
                     <NavigationMenuLink >
-                        <router-link :to="/home">
+                        <router-link :to="'/home'">
                             <span>Home</span>
                         </router-link>
                     </NavigationMenuLink>

@@ -14,8 +14,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { vAutoAnimate } from '@formkit/auto-animate/vue'
-import {onMounted, ref} from "vue"
-import axios from 'axios';
 import {login} from "@/util/auth"
     
 const formSchema = toTypedSchema(z.object({
@@ -30,7 +28,7 @@ const form = useForm({
 const emit = defineEmits(['loginResponse']);
 
 const onSubmit =  form.handleSubmit(async (values) => {
-    const response = await login(values.login,values.password);
+    const response:{} = await login(values.login,values.password);
     if(!response || !response.status) {
         emit('loginResponse',"general_error");
         return

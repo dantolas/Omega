@@ -34,38 +34,43 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {test,sendToSolve} from '@/util/api'
 defineOptions({ inheritAttrs: false })
 const props = defineProps({
-    matrix:{
-        grid:[[]],
-        startX:Number,
-        startY:Number,
-        endX:Number,
-        endY:Number
-    }
+    matrix: {
+      type: Object as PropType<{ grid: any[][] }>,
+      default: () => ({ grid: [[]] }),
+    },
+  setup(props) {
+  }
 });
 const rows = ref(props.matrix.grid.length);
 const cols = ref(props.matrix.grid[0].length);
+const buttonsDisabled = ref(false);
+const animationSpeed = ref(300);
+let animationResolver;
+
+
 const colors = ref({
     block:{
-        bg:"#000",
-        fg:"#fff"
+        bg:"",
+        fg:""
     },
     path:{
-        bg:"#000",
-        fg:"#fff"
+        bg:"#2ec27e",
+        fg:""
     },
     stop:{
-        bg:"#000",
-        fg:"#fff"
+        bg:"#f5c211",
+        fg:""
     },
     start:{
-        bg:"#000",
-        fg:"#fff"
+        bg:"#c64600",
+        fg:""
     },
     end:{
-        bg:"#000",
-        fg:"#fff"
+        bg:"#ff7800",
+        fg:""
     },
 });
 const getId = (symbol:String):String =>{
@@ -95,7 +100,34 @@ const getId = (symbol:String):String =>{
     }
 };
 
-const getFg = (symbol:String):String =>{
+const getStyle = (symbol:string):Object =>{
+    const style = {
+        fontSize:"",
+        backgroundColor:"",
+        color:"",
+        border:""
+    };
+    style.color = getFg(symbol);
+    style.backgroundColor = getBg(symbol);
+    switch (symbol) {
+        case ".":
+            style.fontSize = "1.5em";
+            break;
+        case "S":
+            break;
+        case "E":
+            break;
+        case "x":
+            break;
+        case "S/E":
+            break
+        default:
+            break;
+    }
+    return style;
+}
+
+const getFg = (symbol:string):string =>{
     switch (symbol) {
         case "#":
             return colors.value.block.fg;
@@ -121,7 +153,7 @@ const getFg = (symbol:String):String =>{
             break;
     }
 };
-const getBg = (symbol:String):String =>{
+const getBg = (symbol:string):string =>{
     switch (symbol) {
         case "#":
             return colors.value.block.bg;
@@ -148,11 +180,132 @@ const getBg = (symbol:String):String =>{
     }
 };
 
+const solve = async ():Promise<[]> =>{
+    const matrixJson = JSON.stringify(props.matrix.grid);
+    const response = await sendToSolve(matrixJson,"S","E","BFS");
+    console.log(response);
+    solved.value = true;
+    pathFound.value = response.pathFound;
+    stopsFound.value = response.stopsFound;
+    of.value = response.of;
+    time.value = response.time;
+    searchPath.value = response.searchPath;
+    path.value = response.path;
+    stopsNotFound.value = response.stopsNotFound;
+    return null;
+};
+
+const getAllCells = () =>{
+    return document.querySelectorAll("#c");
+}
+const gatherCellsByCoords = (coords:[{}])=>{
+    const cells = getAllCells();
+    const arr = [];
+    for(const coord of coords){
+        const x = coord.x;
+        const y = coord.y;
+        for(const cell of cells){
+            if(cell.getAttribute("x")==x&&cell.getAttribute("y")==y){
+                arr.push(cell);
+                break;
+            };
+        }
+    }
+    return arr;
+};
+
+const visualizePath = async (path:[]) =>{
+    const cells = gatherCellsByCoords(path);
+    let counter = 0;
+    const animate = async () =>{
+        await  new Promise((resolve) => { 
+            animationResolver = resolve;
+            buttonsDisabled.value = true;
+            let counter = 0;
+            for (let i = 0; i < cells.length; i++) {
+                const cell = cells[i];
+                setTimeout(() => {
+                    if(!animationResolver) return;
+                    if(cell.style.opacity == "0.3"){
+                        cell.style.opacity = "0.7";
+                    }
+                    if(cell.style.opacity == "0.7"){
+                        cell.style.opacity = "0.5";
+                    }
+                    else cell.style.opacity = "0.3";
+                    if (i === cells.length - 1) resolve(); 
+                }, animationSpeed.value * counter);
+                counter++;
+            }
+        });    
+    }
+    await animate();
+    buttonsDisabled.value = false;
+    for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
+        cell.style.opacity = "1";
+    }
+};
+const visualizeSearchPath = async (path:[]) =>{
+    const cells = gatherCellsByCoords(path);
+    let counter = 0;
+    const animate = async () =>{
+        await  new Promise((resolve) => { 
+            animationResolver = resolve;
+            buttonsDisabled.value = true;
+            let counter = 0;
+            for (let i = 0; i < cells.length; i++) {
+                const cell = cells[i];
+                setTimeout(() => {
+                    if(!animationResolver) return;
+                    if(cell.style.opacity == "0.3"){
+                        cell.style.opacity = "0.7";
+                    }
+                    if(cell.style.opacity == "0.7"){
+                        cell.style.opacity = "0.5";
+                    }
+                    else cell.style.opacity = "0.3";
+                    if (i === cells.length - 1) resolve(); 
+                }, animationSpeed.value * counter);
+                counter++;
+            }
+        });    
+    }
+    await animate();
+    buttonsDisabled.value = false;
+    for (let i = 0; i < cells.length; i++) {
+        const cell = cells[i];
+        cell.style.opacity = "1";
+    }
+};
+
+const endAnimation = () =>{
+    if(animationResolver){
+        animationResolver();
+        animationResolver = null;
+        const cells = getAllCells();
+        for (let i = 0; i < cells.length; i++) {
+            const cell = cells[i];
+            setTimeout(() => {
+                cell.style.opacity = "1";
+            }, animationSpeed.value);
+        }
+    }
+}
+
+const solved = ref(false);
+const pathFound = ref(false);
+const stopsFound = ref(0);
+const of = ref(0);
+const stopsNotFound = ref([]);
+const path = ref([]);
+const searchPath = ref([]);
+const time = ref(0);
 </script>
 
 <template>
-    <div id="controls">
-        <div id="colors" class="mx-auto w-fit">
+    <div id="controls" class="flex flex-row justify-center items-center gap-2">
+        <div id="colors" class=" w-fit">
             <Popover>
                 <PopoverTrigger>
                     <div class="flex">
@@ -219,7 +372,7 @@ const getBg = (symbol:String):String =>{
                         </div>
                     </div>
                     <Separator class="my-1" :decorative="true" />
-                    <div id="xColors">
+                    <div id="sColors">
                         <div class="flex">
                             <pre class="">S|</pre>
                             <p class="">Start</p>
@@ -237,7 +390,7 @@ const getBg = (symbol:String):String =>{
                         </div>
                     </div>
                     <Separator class="my-1" :decorative="true" />
-                    <div id="xColors">
+                    <div id="eColors">
                         <div class="flex">
                             <pre class="">E|</pre>
                             <p class="">End</p>
@@ -257,7 +410,49 @@ const getBg = (symbol:String):String =>{
                 </PopoverContent>
             </Popover>    
         </div>
+        <div id="speed">
+                <div class="flex flex-row p-1 w-fit">
+                    <HoverCard >
+                        <HoverCardTrigger class="flex gap-2 hover:cursor-help w-1/2">
+                        <span class="text-xl text-center w-fit h-fit mx-auto mt-1">
+                            Animation Speed
+                        </span>
+                        </HoverCardTrigger>
+                        <HoverCardContent>
+                        Speed of path animation in milliseconds.
+                        </HoverCardContent>
+                    </HoverCard>
+                    <Input type="number" v-model="animationSpeed" class="w-1/3 text-lg"></Input>
+                </div>
+        </div>
+        <div>
+            <Button class="" @click="solve">Solve Matrix</Button>
+        </div>
     </div>
+    <transition>
+    
+        <div id="solved" v-if="solved" class="flex flex-wrap flex-row justify-center gap-1 pt-2 w-max mx-auto relative">
+            <div>
+                <div v-if="pathFound" class="text-xl p-3 border rounder border-green-300 text-green-300">
+                    Full path was found.
+                </div>
+                <div v-else class="text-xl p-3 border rounder border-red-300 text-red-300">
+                    Full path was not found.
+                </div>
+            </div>
+            <div class="text-xl p-3 border rounded">
+                Stops found : {{stopsFound}}/{{of}}
+            </div>
+            <div class="text-xl p-3 border rounded">
+                Time taken: {{time}}ms | {{time/1000}}s
+            </div>
+            <div v-if="pathFound" class="flex flex-row gap-1 w-full justify-center">
+                <Button :disabled="buttonsDisabled"  @click="visualizePath(path)" class="w-5/12">Visualize Path</Button>
+                <Button :disabled="buttonsDisabled"  @click="visualizeSearchPath(searchPath)" class="w-5/12">Visualize Search Path</Button>
+            </div>
+            <Button @click="endAnimation" v-if="buttonsDisabled" class="w-5/12">Stop</Button>
+        </div>
+    </transition>
 
     <div id="tablewrapper" class="w-full p-5">
         <transition>
@@ -280,16 +475,14 @@ const getBg = (symbol:String):String =>{
                                 <transition-group>
                                     <TableCell  
                                     v-for="y in cols" :key="y"
-                                    :id="getId(matrix.grid[x-1][y-1])"
+                                    :x="x-1" :y="y-1"
+                                    id="c"
+                                    :name="getId(matrix.grid[x-1][y-1])"
                                     :innerText="matrix.grid[x-1][y-1]"
-                                    :style="{
-                                        backgroundColor:getBg(matrix.grid[x-1][y-1]),
-                                        color:getFg(matrix.grid[x-1][y-1])
-                                    }"
-                                    class="hover:cursor-pointer hover:bg-muted border 
-                                    border-zinc-50 text-center transition-[opacity,colors]
-                                        duration-300"
-                                    >
+                                    :style="getStyle(matrix.grid[x-1][y-1])"
+                                    class="border 
+                                    border-zinc-50 text-center 
+                                    transition-all duration-1000 font-bold text-md">
                                     </TableCell>
                                 </transition-group>
                             </TableRow>

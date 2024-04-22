@@ -17,7 +17,6 @@ import {
     HoverCardTrigger,
 } from '@/components/ui/hover-card'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Toggle } from '@/components/ui/toggle'
 import { Slider } from '@/components/ui/slider'
 import {ref} from 'vue'
 import { Input } from '@/components/ui/input'
@@ -31,7 +30,6 @@ const props = defineProps({
     x:Number,
     y:Number,
     lastMatrixJson:{
-        type:String,
         default:""
     }
 });
@@ -94,13 +92,20 @@ const pointerOverCell = (e)=>{
 const setCharacter:void = (element,text:String,withColor:Boolean) =>{
     if(withColor) element.style.backgroundColor = "hsl(var(--primary) / 0.9)";
     element.style.opacity = 0.2
-        setTimeout(() => {
+    setTimeout(() => {
         element.innerText = text;
         element.style.opacity = 1;
         element.style.backgroundColor = "";
+        if(text === "x") element.style.backgroundColor = "tomato";
+        if(text === "S") element.style.backgroundColor = "#c64600";
+        if(text === "E") element.style.backgroundColor = "#c64600";
+        if(text === "S/E") element.style.backgroundColor = "#c64600";
+        if(text === ".") element.style.border= "none";
+        else {
+            element.style.color = "";
+            element.style.border = "";
+        }
     }, 200);
-    if(text === "x") element.style.color = "tomato";
-    else element.style.color = "";
 }
 const placeCharacter:void = (cell,value,withColor:Boolean) =>{
     if(!value){
@@ -136,11 +141,9 @@ const placeStart = (cellX,cellY,cell,withColor:Boolean):void =>{
             if(cells[i].getAttribute("x")!==start.x||cells[i].getAttribute("y")!==start.y) continue;
             if(cells[i].getAttribute("x")===end.x&&cells[i].getAttribute("y")===end.y){
                 setCharacter(cells[i],"E",withColor);
-                cell.style.color = "orange";
                 break;
             };
             setCharacter(cells[i],"#",withColor);
-            cells[i].style.color = "";
             break;
         }
     }
@@ -149,11 +152,9 @@ const placeStart = (cellX,cellY,cell,withColor:Boolean):void =>{
     showAlert.value = false;
     if(cellX == end.x && cellY == end.y){
         setCharacter(cell,"S/E",withColor);
-        cell.style.color = "orange";
         return;
     }
     setCharacter(cell,"S",withColor);
-    cell.style.color= "orange";
     return;
 }
 
@@ -164,11 +165,9 @@ const placeEnd = (cellX,cellY,cell,withColor:Boolean):void =>{
             if(cells[i].getAttribute("x")!==end.x||cells[i].getAttribute("y")!==end.y) continue;
             if(cells[i].getAttribute("x")===start.x&&cells[i].getAttribute("y")===start.y){
                 setCharacter(cells[i],"S",withColor);
-                cell.style.color = "orange";
                 break;
             };
             setCharacter(cells[i],"#",withColor);
-            cells[i].style.color = "";
             break;
         }
 
@@ -178,11 +177,9 @@ const placeEnd = (cellX,cellY,cell,withColor:Boolean):void =>{
     showAlert.value = false;
     if(cellX == start.x && cellY == start.y){
         setCharacter(cell,"S/E",withColor);
-        cell.style.color = "orange";
         return;
     }
     setCharacter(cell,"E",withColor);
-    cell.style.color = "orange";
     return;
 }
 
@@ -230,10 +227,8 @@ const buildMatrix = ():void =>{
     const rows = getRows();
     const build = {
         matrix:rows,
-        startX:start.x,
-        startY:start.y,
-        endX:end.x,
-        endY:end.y
+        startString:rows[start.x][start.y],
+        endString:rows[start.x][start.y],
     }
     emit('build',build);
 };
@@ -242,7 +237,7 @@ const  copyMatrix = async ()=>{
     await navigator.clipboard.writeText(JSON.stringify(getRows()));
 }
 
-const showPasteBox:Boolean = ref(false);
+const showPasteBox:boolean = ref(false);
 const getPasteValue = ():String =>{
     return document.querySelector('#pasteInput').value;
 }
@@ -284,10 +279,15 @@ const pasteMatrix = (json:String):void =>{
 const lastMatrix = ref(props.lastMatrixJson);
 if(lastMatrix.value) pasteMatrix(lastMatrix.value);
 
+const clearMatrix = () =>{
+    for(const cell of getAllCells()){
+        placeCharacter(cell,"#");
+    }
+};
 </script>
 
 <template>
-    <div class="w-full relative p-2 flex flex-row rounded border">
+    <div class="w-full p-2 flex flex-row rounded border">
         <div id="tablewrapper" class="w-3/4">
             <transition>
                 <Table  @pointerup="switchMouseHold(false,$event)" class="p-1">
@@ -302,7 +302,7 @@ if(lastMatrix.value) pasteMatrix(lastMatrix.value);
                     </TableHeader>
                     <TableBody>
                         <TransitionGroup>
-                            <TableRow id="row" v-for="x in rows" :key="x">
+                            <TableRow id="row" v-for="x in rows" :key="x" class="">
                                 <TableCell class="font-bold pl-0 text-lg">
                                     {{x-1}}
                                 </TableCell>
@@ -324,7 +324,7 @@ if(lastMatrix.value) pasteMatrix(lastMatrix.value);
             </transition>
         </div>
 
-        <div id="controls" class="w-1/4 p-2 flex flex-col relative ">
+        <div id="controls" class="w-1/4 p-2 flex flex-col sticky top-0 right-1">
             <div class="relative w-full">
                 <div class="flex flex-row p-1">
                     <HoverCard >
@@ -402,6 +402,7 @@ if(lastMatrix.value) pasteMatrix(lastMatrix.value);
                 </div>
             </div>
             <div class="p-3 flex flex-col gap-2 items-center justify-center mt-3 ">
+                <Button @click="clearMatrix" >Clear</Button>
                 <div class="flex flex-row gap-3">
                     <Popover>
                         <PopoverTrigger>

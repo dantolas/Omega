@@ -4,17 +4,13 @@ import { useToast } from '@/components/ui/toast/use-toast'
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
-  NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
+    NavigationMenuList
 } from '@/components/ui/navigation-menu'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import axios from 'axios';
-import {onMounted, ref,h} from "vue"
-import { RouterLink } from 'vue-router'
+import {ref,h} from "vue"
 import MatrixBuilder from '@/components/MatrixBuilder.vue'
 import MatrixVisualizer from '@/components/MatrixVisualizer.vue'
 import { ToastAction } from '@/components/ui/toast'
@@ -46,7 +42,7 @@ const builtMatrix = ref({
 }
 );
 
-const builtMatrixJson:String = ref("");
+const builtMatrixJson=  ref("");
 
 const caughtBuild = (build) =>{
     console.log("Event caught");

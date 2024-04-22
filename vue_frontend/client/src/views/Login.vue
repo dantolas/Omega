@@ -1,21 +1,16 @@
 <script setup lang="ts">
-import { vAutoAnimate } from '@formkit/auto-animate/vue'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-vue-next'
 import {ref} from "vue"
 import LoginForm from '@/components/LoginForm.vue'
 import RegisterForm from '@/components/RegisterForm.vue'
-import {useRouter,useRoute} from 'vue-router'
+import {useRouter} from 'vue-router'
 
 const alertTitle = ref("Some value");
 const alertDescription = ref("Default alert description telling u tu muck of");
 const showAlert = ref(false);
-const alertVariant = ref("");
 
 
 const router = useRouter();
