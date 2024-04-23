@@ -34,7 +34,6 @@ router.beforeEach(async (to,from) => {
         return { name: 'Login' }
     }
     if(to.name === 'Login' && logged){
-        console.log("Not working");
         return { name:"Home"}
     }
 })
