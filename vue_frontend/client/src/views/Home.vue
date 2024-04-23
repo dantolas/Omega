@@ -18,15 +18,15 @@ const { toast } = useToast()
 const navlinks: { title: string, href: string, description: string }[] = [
   {
     title: 'API Documentation',
-    href: '/api/docs',
+    href: '/api',
     description:
       'Read Gridster API docs with usage information and http specifications',
   },
   {
-    title: 'API Playground',
-    href: '/api/playground',
+    title: 'About',
+    href: '/about',
     description:
-      'Try the Gridster REST API yourself, to see how it works',
+      'Learn more about Gridster and why it exists.',
   },
 ]
 
@@ -92,6 +92,8 @@ const tabsValue = ref("builder");
     </NavigationMenu>
 
     <div>
+        <h1 class="text-center text-3xl text-orange-300">Welcome to Gridster [#.xSE]</h1>
+        <p class="text-center text-2xl text-orange-200">Go on and build yourself a Matrix.</p>
             <Tabs default-value="builder" orientation="horizontal" class="" v-model="tabsValue">
             <div class="w-fit mx-auto">
                 <TabsList class="w-full">

@@ -9,6 +9,8 @@ var app = createApp(App);
 const routes:Readonly<RouteRecordRaw[]> = [
     { path: "/", redirect: "/login" },
     { path: "/login", name:"Login", component: () => import('@/views/Login.vue')},
+    { path: "/api", name: "ApiDocs", component: () => import('@/views/Api.vue') },
+    { path: "/about", name: "About", component: () => import('@/views/About.vue') },
     { path: "/home", name:"Home", component: () => import('@/views/Home.vue')},
     { path: "/:pathMatch(.*)*", name:"NotFound", component: () => import('@/views/NotFound.vue') },
 ];
@@ -19,16 +21,18 @@ const router = createRouter({
 });
 
 const publicPages = [
-    "api"
+    "ApiDocs",
+    "About",
+
 ]
-router.beforeEach(async (to,) => {
-    if(publicPages.includes(to.toString())) return to;
+router.beforeEach(async (to,from) => {
+    if(publicPages.includes(to.name)) return to;
     let logged:boolean = await isAuthenticated();
     if(to.name === 'Login' && logged){
+        console.log("Not working");
         return { name:"Home"}
     }
     if ( !logged && to.name !== 'Login') {
-        // redirect the user to the login page
         return { name: 'Login' }
     }
 })

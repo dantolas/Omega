@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-vue-next'
@@ -181,9 +190,10 @@ const getBg = (symbol:string):string =>{
 };
 
 const solve = async ():Promise<[]> =>{
+    console.log(algorhitm);
+    if(!props.matrix.grid || props.matrix.grid.length == 0 || props.matrix.grid[0].length == 0) return;
     const matrixJson = JSON.stringify(props.matrix.grid);
     const response = await sendToSolve(matrixJson,"S","E","BFS");
-    console.log(response);
     solved.value = true;
     pathFound.value = response.pathFound;
     stopsFound.value = response.stopsFound;
@@ -214,7 +224,17 @@ const gatherCellsByCoords = (coords:[{}])=>{
     return arr;
 };
 
+const scrollToStart = () =>{
+    const startCell = document.querySelector("#start");
+    const tablewrapper = document.querySelector("#table");
+    if(startCell){
+        tablewrapper.scrollTop = startCell.offsetTop - tablewrapper.clientHeight / 2;
+        tablewrapper.scrollTop = startCell.offsetLeft - tablewrapper.clientWidth / 2;
+    }
+};
+
 const visualizePath = async (path:[]) =>{
+    scrollToStart();
     const cells = gatherCellsByCoords(path);
     let counter = 0;
     const animate = async () =>{
@@ -293,6 +313,8 @@ const endAnimation = () =>{
     }
 }
 
+const algorhitm = ref("BFS");
+
 const solved = ref(false);
 const pathFound = ref(false);
 const stopsFound = ref(0);
@@ -304,7 +326,7 @@ const time = ref(0);
 </script>
 
 <template>
-    <div id="controls" class="flex flex-row justify-center items-center gap-2">
+    <div v-if="matrix.grid[0].length > 0" id="controls" class="flex flex-row justify-center items-center gap-2">
         <div id="colors" class=" w-fit">
             <Popover>
                 <PopoverTrigger>
@@ -425,6 +447,25 @@ const time = ref(0);
                     <Input type="number" v-model="animationSpeed" class="w-1/3 text-lg"></Input>
                 </div>
         </div>
+        <div id="selectAlgo">
+
+                <Select v-model="algorhitm" >
+                    <SelectTrigger>
+                        <SelectValue  class="text-md text-orange-300" placeholder="Pick an algorhitm" />
+                    </SelectTrigger>
+                <SelectContent >
+                        <SelectGroup>
+                            <SelectLabel>Algorhitm</SelectLabel>
+                            <SelectItem value="BFS">
+                            Breadth First Search
+                            </SelectItem>
+                            <SelectItem value="DFS">
+                            Depth First Search
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+        </div>
         <div>
             <Button class="" @click="solve">Solve Matrix</Button>
         </div>
@@ -434,14 +475,14 @@ const time = ref(0);
         <div id="solved" v-if="solved" class="flex flex-wrap flex-row justify-center gap-1 pt-2 w-max mx-auto relative">
             <div>
                 <div v-if="pathFound" class="text-xl p-3 border rounder border-green-300 text-green-300">
-                    Full path was found.
+                    Path was found.
                 </div>
                 <div v-else class="text-xl p-3 border rounder border-red-300 text-red-300">
-                    Full path was not found.
+                    No path was not found.
                 </div>
             </div>
             <div class="text-xl p-3 border rounded">
-                Stops found : {{stopsFound}}/{{of}}
+                Stops visited: {{stopsFound}}/{{of}}
             </div>
             <div class="text-xl p-3 border rounded">
                 Time taken: {{time}}ms | {{time/1000}}s
@@ -456,7 +497,7 @@ const time = ref(0);
 
     <div id="tablewrapper" class="w-full p-5">
         <transition>
-            <Table key="1" v-if="rows > 0 && cols > 0">
+            <Table key="1" v-if="rows > 0 && cols > 0" id="table">
                     <TableCaption>{{rows}} x {{cols}}</TableCaption>
                     <TableHeader>
                         <TableRow class="">

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.core.StreamReadConstraints.Builder;
 import com.google.gson.Gson;
 import com.kuta.app.models.ApiResponseModel;
 import com.kuta.pathfinding_algos.BFS;
@@ -63,9 +62,10 @@ public class ApiController {
     @PostMapping(value = "solve",produces = "application/json",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> solve(@RequestBody ApiRequestData data){
         if(data == null) return ResponseEntity.badRequest().body("Please send a valid request according to the documentation");
+        if(data.start() == null || data.end() == null || data.algorhitm() == null)
+        return ResponseEntity.badRequest().body("Some data was missing, please send a correct request");
+
         String[][] charMatrix = gson.fromJson(data.matrixJson(),String[][].class);
-        logger.info(String.valueOf(charMatrix.length));
-        logger.info(data.matrixJson());
         return ResponseEntity.ok().body(BFS.solve(charMatrix, data.start(), data.end()));
     }
 

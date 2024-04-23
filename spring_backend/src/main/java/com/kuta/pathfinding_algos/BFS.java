@@ -37,8 +37,8 @@ public abstract class BFS implements Pathfinder{
             if(stopsFoundCoords.size() == stops.size()) break;
             solvedPaths = getPathToClosest(charMatrix, start.x(), start.y(),"x",stopsFoundCoords);
             newPath = solvedPaths.get(0);
+            if(newPath.size() == 0) break;
             searchPath.addAll(solvedPaths.get(1));
-
             completePath.addAll(newPath);
             start = newPath.getLast();
             stopsFoundCoords.add(start);

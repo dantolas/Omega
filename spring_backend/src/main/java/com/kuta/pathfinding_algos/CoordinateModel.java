@@ -3,7 +3,7 @@ package com.kuta.pathfinding_algos;
 import java.util.Objects;
 
 /**
- * XYNode
+ * CoordinateModel
  */
 public record CoordinateModel(int x, int y) {
 

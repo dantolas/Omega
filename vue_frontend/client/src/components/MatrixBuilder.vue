@@ -26,6 +26,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {presets} from '@/util/matrixPresets'
 const props = defineProps({
     x:Number,
     y:Number,
@@ -284,6 +294,7 @@ const clearMatrix = () =>{
         placeCharacter(cell,"#");
     }
 };
+const presetSelect = ref("");
 </script>
 
 <template>
@@ -429,6 +440,31 @@ const clearMatrix = () =>{
                     </Popover>
                 </div>
                 <Button @click="buildMatrix" class="w-1/2 font-bold ">Build</Button>
+                <Select @update:modelValue="(payload) =>pasteMatrix(JSON.stringify(presets[payload]))" v-model="presetSelect" >
+                    <SelectTrigger>
+                        <SelectValue  placeholder="Build from preset" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Presets</SelectLabel>
+                            <SelectItem value="preset1">
+                                Preset 1
+                            </SelectItem>
+                            <SelectItem value="preset2">
+                                Preset 2
+                            </SelectItem>
+                            <SelectItem value="preset3">
+                                Preset 3
+                            </SelectItem>
+                            <SelectItem value="preset4">
+                                Preset 4
+                            </SelectItem>
+                            <SelectItem value="preset5">
+                                Preset 5
+                            </SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
             </div>
             <div class="">
                 <Transition>
