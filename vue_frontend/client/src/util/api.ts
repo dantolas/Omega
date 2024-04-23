@@ -3,7 +3,7 @@ import axios from 'axios';
 const test = async () =>{
     axios.defaults.withXSRFToken = true;
     const response:boolean = await axios
-        .get("http://localhost:8080/api/test",
+        .get("http://localhost:8080/gridster/api/test",
         )
         .then(response => {
             const data = response.data;
@@ -19,7 +19,7 @@ const sendToSolve = async(matrix,startString,endString,algo) =>{
 
     axios.defaults.withXSRFToken = true;
     const response:boolean = await axios
-        .post("http://localhost:8080/api/solve",
+        .post("http://localhost:8080/gridster/api/solve",
             {
                 matrixJson:matrix,
                 start:startString,
