@@ -34,8 +34,8 @@ const navlinks: { title: string, href: string, description: string }[] = [
                 <NavigationMenuContent class="">
                     <NavigationMenuLink class="">
                         <ul class="">
-                            <li v-for="link in navlinks" class="gap-2 w-full">
-                                <router-link :to="link.href" 
+                            <li v-for="link in navlinks" class="gap-2 w-full" :key="link">
+                                <router-link :to="link.href" :key="link.href"
                                     class="flex flex-col gap-1 
                                     w-full text-wrap p-1  hover:bg-muted"
                                 >
