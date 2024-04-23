@@ -30,6 +30,7 @@ router.beforeEach(async (to,from) => {
         return to.name;
     }
     let logged:boolean = await isAuthenticated();
+    console.log("Logged in:"+logged)
     if ( !logged && to.name !== 'Login') {
         return { name: 'Login' }
     }
