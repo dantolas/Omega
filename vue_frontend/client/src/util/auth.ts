@@ -3,7 +3,7 @@ const isAuthenticated = async ():Promise<boolean>=>{
     axios.defaults.withCredentials = true;
     axios.defaults.withXSRFToken = true;
     const response:boolean = await axios
-        .get("http://localhost:8080/gridster/auth/authenticated",
+        .get("http://localhost:8080/auth/authenticated",
         )
         .then(response => {
             const data = response.data;
@@ -20,7 +20,7 @@ const isAuthenticated = async ():Promise<boolean>=>{
 
 const login = async (username,password):Promise<{}>=>{
     const response = await axios
-        .post("http://localhost:8080/gridster/auth/login",
+        .post("http://localhost:8080/auth/login",
             {
                 login:username,
                 password:password
@@ -32,7 +32,6 @@ const login = async (username,password):Promise<{}>=>{
         .then(response => {
             const data = response.data;
             if(!data.status){
-                alert("Cringe");
                 return null;
             }
             return data;
@@ -45,7 +44,7 @@ const login = async (username,password):Promise<{}>=>{
 
 const signup = async (username:string,email:string,password:string)=>{
     const response = await axios
-        .post("http://localhost:8080/gridster/auth/signup",{
+        .post("http://localhost:8080/auth/signup",{
             username:username,
             email:email,
             password:password
