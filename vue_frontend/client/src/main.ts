@@ -26,14 +26,16 @@ const publicPages = [
 
 ]
 router.beforeEach(async (to,from) => {
-    if(publicPages.includes(to.name)) return to;
+    if(publicPages.includes(to)) {
+        return to.name;
+    }
     let logged:boolean = await isAuthenticated();
+    if ( !logged && to.name !== 'Login') {
+        return { name: 'Login' }
+    }
     if(to.name === 'Login' && logged){
         console.log("Not working");
         return { name:"Home"}
-    }
-    if ( !logged && to.name !== 'Login') {
-        return { name: 'Login' }
     }
 })
 app.use(router);

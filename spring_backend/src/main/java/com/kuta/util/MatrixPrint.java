@@ -1,7 +1,7 @@
 package com.kuta.util;
 
 /**
- * MatrixPrint
+ * Can colorfully print a matrix to the outputStream
  */
 public class MatrixPrint {
 

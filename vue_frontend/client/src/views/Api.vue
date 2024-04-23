@@ -57,7 +57,7 @@ const navlinks: { title: string, href: string, description: string }[] = [
         <li><strong>Method:</strong> GET</li>
         <li><strong>Description:</strong> Tests the API endpoint by solving a predefined problem.</li>
         <li><strong>Request:</strong>Simple get request</li>
-        <li><strong>Example:</strong> <code>curl -X GET http://yourdomain.com/api/test</code></li>
+        <li><strong>Example:</strong> <code>curl -X GET http://samuelkuta.tech/api/test</code></li>
     </ul>
 </div>
 
@@ -89,10 +89,23 @@ const navlinks: { title: string, href: string, description: string }[] = [
                 }
             </code>
         </li>
-        <li><strong>Example:</strong> <code>curl -X POST -H "Content-Type: application/json" -d '{"matrixJson":"[[\"#\",\"#\",\"#\"],[\"#\",\"S\",\"#\"],[\"#\",\"E\",\"#\"]]","start":"S","end":"E"}' http://yourdomain.com/api/solve</code></li>
+        <li><strong>Example:</strong> <code>curl -X POST -H "Content-Type: application/json" -d '{"matrixJson":"[[\"#\",\"#\",\"#\"],[\"#\",\"S\",\"#\"],[\"#\",\"E\",\"#\"]]","start":"S","end":"E"}' http://samuelkuta.tech/api/solve</code></li>
     </ul>
 </div>
+    <h1 class="text-center text-3xl text-orange-300">Available algorhitms</h1>
+    <h2 class="text-center text-2xl text-orange-200">BFS</h2>
+    <p class="w-1/2 text-center mx-auto text-wrap">
+        BFS is a method for systematically exploring a maze or graph. It starts at a specific point and explores all nearby locations before moving on to further ones. By doing this level-by-level search, BFS ensures that if a path exists, it finds the shortest one. It's like exploring a maze by checking all nearby rooms before moving to distant ones, ensuring an efficient search for the exit.
+    </p>
+    <h2 class="text-center text-2xl text-orange-200">DFS - Coming soon</h2>
+    <p class="w-1/2 text-center mx-auto text-wrap">
+Depth-First Search (DFS) is another algorithm used for traversing or searching tree or graph structures. It starts at a specific point and explores as far as possible along each branch before backtracking. It's like exploring a maze by going as deep as you can into one path before trying another. DFS is not guaranteed to find the shortest path, but it's often used for tasks like maze solving or graph traversal where finding any solution is more important than finding the shortest one.
+    </p>
 
+    <h2 class="text-center text-2xl text-orange-200">A* - Coming soon</h2>
+    <p class="w-1/2 text-center mx-auto text-wrap">
+A* systematically explores possible paths from a starting point to a goal by evaluating neighboring positions. It combines the cost to reach each position from the starting point with an estimate of the cost to reach the goal from that position. Using this combined evaluation, it prioritizes exploring paths that appear closer to the goal, guided by a heuristic function. This approach enables A* to efficiently find the shortest path in navigation and robotics applications.
+    </p>
 </template>
 
 

@@ -41,7 +41,7 @@ tasks {
         options.compilerArgs.add("-parameters")
     }
     bootJar{
-        archiveBaseName.set("boot-app")
+        archiveBaseName.set("Gridster")
         destinationDirectory.set(file("./"))
     }
 }

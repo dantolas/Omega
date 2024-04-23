@@ -17,6 +17,7 @@ import org.springframework.web.filter.CorsFilter;
 
 /**
  * SecurityConfiguration
+ * Configures stuff such as CORS headers, which paths are secured by Spring Security and more
  */
 @Configuration
 @EnableWebSecurity

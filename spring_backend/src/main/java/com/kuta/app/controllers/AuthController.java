@@ -32,70 +32,100 @@ public class AuthController {
 
     Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    private record LoginData(String login,String password){}
-    private record OkLoginResponse(String status){}
-    private record BadLoginResponse(String status,String error){}
+    private record LoginData(String login, String password) {}
 
-    @GetMapping(
-        value = "authenticated",
-        produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE}
-    )
-    public ResponseEntity<?> isAuthenticated(HttpServletRequest request) throws ConnectorInitException, SQLException{
-        logger.info("LOGIN SESSION:"+request.getSession().getId());
+    private record OkLoginResponse(String status) {}
+
+    private record BadLoginResponse(String status, String error) {}
+
+    /**
+     * Checks if the user is authenticated
+     * @param request HttpServletRequest object
+     * @return ResponseEntity containing authentication status
+     * @throws ConnectorInitException if connector initialization fails
+     * @throws SQLException if SQL operation fails
+     */
+    @GetMapping(value = "authenticated", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    public ResponseEntity<?> isAuthenticated(HttpServletRequest request) throws ConnectorInitException, SQLException {
+        logger.info("LOGIN SESSION:" + request.getSession().getId());
         Object user = request.getSession().getAttribute("user");
-        if(user != null){
-            logger.info("User is authenticated:"+user);
+        if (user != null) {
+            logger.info("User is authenticated:" + user);
             return ResponseEntity.ok(new OkLoginResponse("true"));
         }
         return ResponseEntity.ok(new OkLoginResponse("false"));
     };
-    @PostMapping(
-        value = "login",
-        consumes = {
-            MediaType.APPLICATION_JSON_VALUE,
-            MediaType.APPLICATION_XML_VALUE,
-        },
-        produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.APPLICATION_XML_VALUE}
-    )
-    public ResponseEntity<?> login(@RequestBody LoginData login,HttpServletRequest request) throws ConnectorInitException, SQLException{
-        logger.info("LOGIN SESSION:"+request.getSession().getId());
-        if(!LoginService.validateLogin(login.login(),login.password())){
+
+    /**
+     * Handles user login
+     * @param login LoginData object containing login information
+     * @param request HttpServletRequest object
+     * @return ResponseEntity containing login status
+     * @throws ConnectorInitException if connector initialization fails
+     * @throws SQLException if SQL operation fails
+     */
+    @PostMapping(value = "login", consumes = { MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE })
+    public ResponseEntity<?> login(@RequestBody LoginData login, HttpServletRequest request)
+            throws ConnectorInitException, SQLException {
+        logger.info("LOGIN SESSION:" + request.getSession().getId());
+        if (!LoginService.validateLogin(login.login(), login.password())) {
             logger.info("Login failed: invalid credentials");
-           return  ResponseEntity.ok(new BadLoginResponse("failed","invalid_credentials."));
+            return ResponseEntity.ok(new BadLoginResponse("failed", "invalid_credentials."));
         }
-        request.getSession().setAttribute("user", login.login()+LocalDateTime.now());
-            logger.info("New log in:"+login.login());
+        request.getSession().setAttribute("user", login.login() + LocalDateTime.now());
+        logger.info("New log in:" + login.login());
         return ResponseEntity.ok(new OkLoginResponse("ok"));
     };
 
-    private record SignupData(String username, String email, String password){}
-    private record OkSignupResponse(String status){}
-    private record BadSignupResponse(String status,String error){}
-    @PostMapping(
-        value = "signup", 
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<?> signup(@RequestBody SignupData signup,HttpServletRequest request) throws ConnectorInitException, SQLException{
+    private record SignupData(String username, String email, String password) {}
+
+    private record OkSignupResponse(String status) {}
+
+    private record BadSignupResponse(String status, String error) {}
+
+    /**
+     * Handles user signup
+     * @param signup SignupData object containing signup information
+     * @param request HttpServletRequest object
+     * @return ResponseEntity containing signup status
+     * @throws ConnectorInitException if connector initialization fails
+     * @throws SQLException if SQL operation fails
+     */
+    @PostMapping(value = "signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> signup(@RequestBody SignupData signup, HttpServletRequest request)
+            throws ConnectorInitException, SQLException {
         STATUS_CODE status = SignupService.signup(signup.username, signup.email, signup.password);
-        if(status == STATUS_CODE.EMAIL_TAKEN){
+        if (status == STATUS_CODE.EMAIL_TAKEN) {
             return ResponseEntity.ok(new BadSignupResponse("failed", "email_taken"));
         }
-        if(status== STATUS_CODE.SQL_ERROR){
+        if (status == STATUS_CODE.SQL_ERROR) {
             return ResponseEntity.ok(new BadSignupResponse("failed", "sql_error"));
         }
-        return ResponseEntity.ok(new OkSignupResponse("ok")); 
+        return ResponseEntity.ok(new OkSignupResponse("ok"));
     }
 
-    private record OkLogoutResponse(String status){}
-    @ExceptionHandler({IllegalStateException.class})
-    public ResponseEntity<?> handleException(){
+    private record OkLogoutResponse(String status) {}
+
+    /**
+     * Handles exceptions during logout
+     * @return ResponseEntity containing logout status
+     */
+    @ExceptionHandler({ IllegalStateException.class })
+    public ResponseEntity<?> handleException() {
         return ResponseEntity.ok(new OkLogoutResponse("ok"));
     }
+
+    /**
+     * Logs out the user
+     * @param session HttpSession object
+     * @return ResponseEntity containing logout status
+     */
     @DeleteMapping("logout")
-    public ResponseEntity<?> logout(HttpSession session){
+    public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.ok(new OkLogoutResponse("ok"));
     }
-    
+
 }

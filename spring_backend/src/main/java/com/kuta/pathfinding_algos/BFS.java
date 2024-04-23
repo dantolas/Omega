@@ -10,12 +10,18 @@ import java.util.Queue;
 import com.kuta.app.models.ApiResponseModel;
 
 /**
- * An implementation of the BFS algorhitm, providic static functionality to search grids
- *
+ * An implementation of the BFS algorithm, providing static functionality to search grids
  */
-public abstract class BFS implements Pathfinder{
+public abstract class BFS implements Pathfinder {
 
-    public static ApiResponseModel solve(String[][] charMatrix,String startString, String endString){
+    /**
+     * Solves the maze using Breadth-First Search algorithm
+     * @param charMatrix The character matrix representing the maze
+     * @param startString The starting character
+     * @param endString The ending character
+     * @return ApiResponseModel containing information about the solved maze
+     */
+    public static ApiResponseModel solve(String[][] charMatrix, String startString, String endString) {
         List<CoordinateModel> searchPath = new ArrayList<>();
         List<CoordinateModel> completePath = new ArrayList<>();
         boolean pathFound = false;
@@ -23,48 +29,54 @@ public abstract class BFS implements Pathfinder{
         int of;
         List<CoordinateModel> stopsNotFound = new ArrayList<>();
 
-
         List<CoordinateModel> stops = getStops(charMatrix);
-        List<CoordinateModel> stopsFoundCoords = new ArrayList<>();;
+        List<CoordinateModel> stopsFoundCoords = new ArrayList<>();
         List<CoordinateModel> newPath = new ArrayList<>();
         List<List<CoordinateModel>> solvedPaths = new ArrayList<>();
 
         long timerStart = System.currentTimeMillis();
 
-        CoordinateModel start = findPosition(charMatrix,startString);
+        CoordinateModel start = findPosition(charMatrix, startString);
         completePath.add(start);
-        while(true){
-            if(stopsFoundCoords.size() == stops.size()) break;
-            solvedPaths = getPathToClosest(charMatrix, start.x(), start.y(),"x",stopsFoundCoords);
+        while (true) {
+            if (stopsFoundCoords.size() == stops.size()) break;
+            solvedPaths = getPathToClosest(charMatrix, start.x(), start.y(), "x", stopsFoundCoords);
             newPath = solvedPaths.get(0);
-            if(newPath.size() == 0) break;
+            if (newPath.size() == 0) break;
             searchPath.addAll(solvedPaths.get(1));
             completePath.addAll(newPath);
             start = newPath.getLast();
             stopsFoundCoords.add(start);
         }
-    
+
         stopsFound = stopsFoundCoords.size();
         of = stops.size();
         for (CoordinateModel stop : stops) {
-            if(stopsFoundCoords.contains(stop)) continue;
+            if (stopsFoundCoords.contains(stop)) continue;
             stopsNotFound.add(stop);
         }
-        
 
-        solvedPaths = getPathToClosest(charMatrix,start.x(),start.y(),endString,stopsFoundCoords);
+        solvedPaths = getPathToClosest(charMatrix, start.x(), start.y(), endString, stopsFoundCoords);
         newPath = solvedPaths.get(0);
         searchPath.addAll(solvedPaths.get(1));
         completePath.addAll(newPath);
-        pathFound = pathComplete(charMatrix,completePath,startString,endString);
+        pathFound = pathComplete(charMatrix, completePath, startString, endString);
 
         long finalTime = (System.currentTimeMillis() - timerStart);
         ApiResponseModel solved = new ApiResponseModel(pathFound, stopsFound, of, stopsNotFound, completePath, searchPath, finalTime);
         return solved;
     }
 
-    public static List<List<CoordinateModel>>
-    getPathToClosest(String[][] charMatrix,int startX,int startY,String find, List<CoordinateModel> ignoreList){
+    /**
+     * Finds the path to the closest target from a given starting point
+     * @param charMatrix The character matrix representing the maze
+     * @param startX The starting X coordinate
+     * @param startY The starting Y coordinate
+     * @param find The target character to find
+     * @param ignoreList List of coordinates to ignore
+     * @return List containing the path to the closest target and the visited coordinates
+     */
+    public static List<List<CoordinateModel>> getPathToClosest(String[][] charMatrix, int startX, int startY, String find, List<CoordinateModel> ignoreList) {
         Queue<Integer> rowq = new LinkedList<>();
         Queue<Integer> colq = new LinkedList<>();
         int rows = charMatrix.length;
@@ -77,10 +89,10 @@ public abstract class BFS implements Pathfinder{
         rowq.add(startX);
         colq.add(startY);
 
-        Map<CoordinateModel,CoordinateModel> parentCoordinateModels = new HashMap<>();
+        Map<CoordinateModel, CoordinateModel> parentCoordinateModels = new HashMap<>();
         // Direction vectors : NORTH,SOUTH,EAST,WEST
-        int[] rowDirections = {-1,1,0,0}; 
-        int[] colDirections = {0,0,1,-1};
+        int[] rowDirections = {-1, 1, 0, 0};
+        int[] colDirections = {0, 0, 1, -1};
         int row;
         int col;
         int checkX;
@@ -89,39 +101,39 @@ public abstract class BFS implements Pathfinder{
         ArrayList<CoordinateModel> path = new ArrayList<>();
         @SuppressWarnings("unused") //LSP Couldn't see the variable used 36 lines below
         int moves = 0;
-        while(rowq.size() > 0){
+        while (rowq.size() > 0) {
             row = rowq.poll();
             col = colq.poll();
-            if(visited[row][col]) continue;
+            if (visited[row][col]) continue;
             visited[row][col] = true;
-            CoordinateModel current = new CoordinateModel(row,col);
+            CoordinateModel current = new CoordinateModel(row, col);
             searchPath.add(current);
-            if(charMatrix[row][col].equals(find) && !ignoreList.contains(current)){
-                for(CoordinateModel parent = new CoordinateModel(row,col); parent != null; parent = parentCoordinateModels.get(parent)){
-                    if(parent.x() == startX && parent.y() == startY) continue;
+            if (charMatrix[row][col].equals(find) && !ignoreList.contains(current)) {
+                for (CoordinateModel parent = new CoordinateModel(row, col); parent != null; parent = parentCoordinateModels.get(parent)) {
+                    if (parent.x() == startX && parent.y() == startY) continue;
                     path.add(parent);
                 }
                 path = new ArrayList<>(path.reversed());
                 break;
             }
 
-            for(int i = 0; i < 4; i++){
-                checkX = row+rowDirections[i];
-                checkY = col+colDirections[i];
+            for (int i = 0; i < 4; i++) {
+                checkX = row + rowDirections[i];
+                checkY = col + colDirections[i];
 
-                if((checkX < 0 || checkY < 0) || (checkX >= rows || checkY >= cols) ) continue;
-                if(charMatrix[checkX][checkY].equals("#")) continue;
-                if(visited[checkX][checkY]) continue;
+                if ((checkX < 0 || checkY < 0) || (checkX >= rows || checkY >= cols)) continue;
+                if (charMatrix[checkX][checkY].equals("#")) continue;
+                if (visited[checkX][checkY]) continue;
 
                 rowq.add(checkX);
                 colq.add(checkY);
-                CoordinateModel nextInLine = new CoordinateModel(checkX,checkY);
+                CoordinateModel nextInLine = new CoordinateModel(checkX, checkY);
                 parentCoordinateModels.put(nextInLine, current);
-                nodesNextLayer ++;
+                nodesNextLayer++;
 
             }
-            nodesCurrentLayer --;
-            if(nodesCurrentLayer >  0) continue;
+            nodesCurrentLayer--;
+            if (nodesCurrentLayer > 0) continue;
             nodesCurrentLayer = nodesNextLayer;
             nodesNextLayer = 0;
             moves++;
@@ -132,38 +144,62 @@ public abstract class BFS implements Pathfinder{
         return pathAndVisited;
     }
 
-    public static List<CoordinateModel> getStops(String[][] charMatrix){
+    /**
+     * Gets the coordinates of all stops in the maze
+     * @param charMatrix The character matrix representing the maze
+     * @return List of CoordinateModel objects representing the stops
+     */
+    public static List<CoordinateModel> getStops(String[][] charMatrix) {
         List<CoordinateModel> stops = new ArrayList<>();
         for (int i = 0; i < charMatrix.length; i++) {
-            for(int j = 0; j < charMatrix[i].length; j++){
-                if(charMatrix[i][j].equals("x")) stops.add(new CoordinateModel(i, j));
+            for (int j = 0; j < charMatrix[i].length; j++) {
+                if (charMatrix[i][j].equals("x")) stops.add(new CoordinateModel(i, j));
             }
         }
         return stops;
-    };
+    }
 
-    public static List<CoordinateModel> getStopsCoords(String[][] charMatrix){
+    /**
+     * Gets the coordinates of all non-stop positions in the maze
+     * @param charMatrix The character matrix representing the maze
+     * @return List of CoordinateModel objects representing the non-stop positions
+     */
+    public static List<CoordinateModel> getStopsCoords(String[][] charMatrix) {
         List<CoordinateModel> positions = new ArrayList<>();
         for (int i = 0; i < charMatrix.length; i++) {
-            for(int j = 0; j < charMatrix[i].length; j++){
-                if(!charMatrix[i][j].equalsIgnoreCase("x")) continue;
+            for (int j = 0; j < charMatrix[i].length; j++) {
+                if (!charMatrix[i][j].equalsIgnoreCase("x")) continue;
                 positions.add(new CoordinateModel(i, j));
             }
         }
         return positions;
     }
 
-    public static boolean pathComplete(String[][] inputMatrix,List<CoordinateModel> path, String start, String end){
-        if(path.size() == 0) return false;
+    /**
+     * Checks if the path is complete from start to end in the maze
+     * @param inputMatrix The character matrix representing the maze
+     * @param path List of CoordinateModel objects representing the path
+     * @param start The starting character
+     * @param end The ending character
+     * @return True if path is complete, otherwise False
+     */
+    public static boolean pathComplete(String[][] inputMatrix, List<CoordinateModel> path, String start, String end) {
+        if (path.size() == 0) return false;
         String pathStart = inputMatrix[path.getFirst().x()][path.getFirst().y()];
         String pathEnd = inputMatrix[path.getLast().x()][path.getLast().y()];
         return (pathStart.equals(start) && pathEnd.equals(end));
     }
-    
-    public static CoordinateModel findPosition(String[][] charMatrix,String value){
+
+    /**
+     * Finds the position of a given value in the maze
+     * @param charMatrix The character matrix representing the maze
+     * @param value The value to find
+     * @return CoordinateModel object representing the position of the value
+     */
+    public static CoordinateModel findPosition(String[][] charMatrix, String value) {
         for (int i = 0; i < charMatrix.length; i++) {
-            for(int j = 0; j < charMatrix[i].length; j++){
-                if(charMatrix[i][j].equals(value)) return new CoordinateModel(i,j);
+            for (int j = 0; j < charMatrix[i].length; j++) {
+                if (charMatrix[i][j].equals(value)) return new CoordinateModel(i, j);
             }
         }
         return null;

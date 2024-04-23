@@ -19,73 +19,50 @@
 9. [TODO](#todo)
 
 ## Introduction  
-        <h1 class="text-3xl text-orange-300">What is Gridster and why should I care?</h1>
-        <p class="text-lg border bg-muted rounded border-orange-300 p-2">
-            Great question. Gridster is a tool that provides 
-            a way to help you with solving complex character mazes,
-            educate about pathfinding algorhitms and understand them better,
-            or to just entertain yourself a bit with it's visuals.
-        </p>
-        <h2 class="text-3xl">Mazes?</h2>
-        <p class="text-lg border bg-muted rounded border-orange-300 p-2">
-            The mazes we're talking about are essentially matrices containing characters, 
-            such as this one:
-        </p>
-        <div class="grid items-center justify-center">
+# What is Gridster and why should I care?
 
-            <div><span>#</span><span>#</span><span>#</span><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>.</span><span>x</span></div>
-            <div><span>#</span><span>#</span><span>#</span><span>x</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>#</span></div>
-            <div><span>#</span><span>.</span><span>.</span><span>.</span><span>.</span><span>#</span><span>S</span><span>.</span><span>#</span><span>#</span></div>
-            <div><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
-            <div><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
-            <div><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>.</span><span>.</span><span>E</span><span>#</span><span>#</span></div>
-            <div><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
-            <div><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
-            <div><span>x</span><span>x</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
-            <div><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
-        </div>
+Great question. Gridster is a tool that provides a way to help you with solving complex character mazes, educate about pathfinding algorithms and understand them better, or to just entertain yourself a bit with its visuals.
 
+## Mazes?
 
-        <h1 class="text-3xl text-orange-300">Who is Gridster for?</h1>
-        <h2 class="text-2xl">Developers</h2>
-        <p class="text-lg bg-muted rounded shadow shadow-orange-300 p-2">
-            If u are a developer and u need to solve mazes in your
-            applications, Gridster provides a REST API that can not only
-            solve a Matrix for u, but also provide u with additional information,
-            and letting u pick one of our pathfinding algoritms.
-        </p>
-        <h2 class="text-2xl">Students and Enthusiasts</h2>
-        <p class="text-lg bg-muted rounded shadow shadow-orange-300 p-2">
-            If u are a IT student or just interested in pathfinding algorhitms,
-            Gridster provides a way for u to build your own Matrix, pick a 
-            pathfinding algorhitm and see how it solves the Matrix for u.
-            U can also see how the Matrix is searched and what the shortest path is,
-            all with nice colorful animations that u can adjust.
-        </p>
+The mazes we're talking about are essentially matrices containing characters, such as this one:
 
-        <h1 class="text-3xl text-orange-300">Why was Gridster created?</h1>
-        <p class="text-lg bg-muted rounded shadow shadow-orange-300 p-2">
-            Gridster was created as a School graduation project for SPŠE Ječná in my 4th year
-            of study there. It's supposed to make Pathfinding algorhitms in Graph theory
-            more approachable and easier to understand.
+<div class="grid items-center justify-center">
+    <div><span>#</span><span>#</span><span>#</span><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>.</span><span>x</span></div>
+    <div><span>#</span><span>#</span><span>#</span><span>x</span><span>.</span><span>.</span><span>.</span><span>.</span><span>.</span><span>#</span></div>
+    <div><span>#</span><span>.</span><span>.</span><span>.</span><span>.</span><span>#</span><span>S</span><span>.</span><span>#</span><span>#</span></div>
+    <div><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
+    <div><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
+    <div><span>#</span><span>.</span><span>#</span><span>#</span><span>.</span><span>.</span><span>.</span><span>E</span><span>#</span><span>#</span></div>
+    <div><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
+    <div><span>#</span><span>.</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
+    <div><span>x</span><span>x</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
+    <div><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span><span>#</span></div>
+</div>
 
-        </p>
-        <h1 class="text-3xl text-orange-300">How was it made?</h1>
-        <p class="text-lg bg-muted rounded shadow shadow-orange-300 p-2">
-            To not go too into detail, Gridster's backend API is built in Java 21
-            using Spring Boot.
-            The visual side was build using Vue 3.
-        </p>
-        <h1 class="text-3xl text-orange-300">Open source?</h1>
-        <p class="text-lg bg-muted rounded shadow shadow-orange-300 p-2">
-            Gridster is an open source project, and if you are interested
-            u can visit the <a class="underline text-orange-300" href="https://github.com/dantolas/Omega">Github Repository</a>
-            containing all the source code.
-        </p>
-    </div>
+# Who is Gridster for?
+
+## Developers
+
+If you are a developer and you need to solve mazes in your applications, Gridster provides a REST API that can not only solve a Matrix for you, but also provide you with additional information, and let you pick one of our pathfinding algorithms.
+
+## Students and Enthusiasts
+
+If you are an IT student or just interested in pathfinding algorithms, Gridster provides a way for you to build your own Matrix, pick a pathfinding algorithm, and see how it solves the Matrix for you. You can also see how the Matrix is searched and what the shortest path is, all with nice colorful animations that you can adjust.
+
+# Why was Gridster created?
+
+Gridster was created as a School graduation project for SPŠE Ječná in my 4th year of study there. It's supposed to make Pathfinding algorithms in Graph theory more approachable and easier to understand.
+
+# How was it made?
+
+To not go too into detail, Gridster's backend API is built in Java 21 using Spring Boot. The visual side was built using Vue 3.
+
+# Open source?
+
+Gridster is an open-source project, and if you are interested you can visit the [Github Repository](https://github.com/dantolas/Omega) containing all the source code.
 ## Requirements
-`Java` - version *20.0.1*+
-`Gradle` - version *9.4*+ 
+`Java` - version *21*+
 ## Installation
 - Clone this repository from the command line
 `git clone address <directory>`
@@ -95,19 +72,12 @@ See [Requirements](#requirements)
 
 ## Usage
 - Navigate to the project directory and execute this command:
-`./gradlew run`
+`java -jar Gridster.jar`
 - The application will start and u will see console output informing u about the program runtime
 behavior. 
+
+
 - After u start the program u can access the [Webpage](http://localhost:8000/)
-
-- I didn't manage to get a .jar archive executable because the way to create them by official
-Spring boot docs or any other forums suggestion I could google just did not work.
-
-However I have provided the **chat.service** file to turn any working .jar file into a linux service
-that can be started and managed with **systemctl**
-
-The problem might be with the built in tomcat web server not packaging correctly, but honestly I
-have no clue and couldn't figure it out.
 
 
 ## Configurations
