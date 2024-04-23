@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.kuta.app.models.ApiResponseModel;
 import com.kuta.pathfinding_algos.BFS;
+import com.kuta.pathfinding_algos.DFS;
 import com.kuta.util.IO;
 
 /**
@@ -29,6 +30,7 @@ public class ApiController {
     Logger logger = LoggerFactory.getLogger(ApiController.class);
 
     Gson gson;
+
 
     @Autowired
     public ApiController(Gson gson) {
@@ -54,7 +56,7 @@ public class ApiController {
         return response;
     }
 
-    private record ApiRequestData(String matrixJson, String start, String end, String algorithm) {
+    private record ApiRequestData(String matrixJson, String start, String end, String algorhitm) {
     };
 
     /**
@@ -67,10 +69,23 @@ public class ApiController {
     public ResponseEntity<?> solve(@RequestBody ApiRequestData data) {
         if (data == null)
             return ResponseEntity.badRequest().body("Please send a valid request according to the documentation");
-        if (data.start() == null || data.end() == null || data.algorithm() == null)
+        System.out.println(data);
+        if (data.start() == null || data.end() == null || data.algorhitm() == null)
             return ResponseEntity.badRequest().body("Some data was missing, please send a correct request");
 
         String[][] charMatrix = gson.fromJson(data.matrixJson(), String[][].class);
-        return ResponseEntity.ok().body(BFS.solve(charMatrix, data.start(), data.end()));
+        ApiResponseModel responseBody = null;
+        switch (data.algorhitm()) {
+            case "BFS":
+            responseBody = BFS.solve(charMatrix, data.start(), data.end());
+                break;
+            case "DFS":
+            responseBody = DFS.solve(charMatrix, data.start(), data.end());
+                break;
+
+            default:
+            return ResponseEntity.badRequest().body("unsupported_algorhitm");
+        }
+        return ResponseEntity.ok().body(responseBody);
     }
 }

@@ -245,7 +245,7 @@ const visualizePath = async (path:[]) =>{
             for (let i = 0; i < cells.length; i++) {
                 const cell = cells[i];
                 setTimeout(() => {
-                    if(!animationResolver) return;
+                    if(animationResolver != resolve) return;
                     if(cell.style.opacity == "0.3"){
                         cell.style.opacity = "0.7";
                     }
@@ -277,7 +277,7 @@ const visualizeSearchPath = async (path:[]) =>{
             for (let i = 0; i < cells.length; i++) {
                 const cell = cells[i];
                 setTimeout(() => {
-                    if(!animationResolver) return;
+                    if(animationResolver != resolve) return;
                     if(cell.style.opacity == "0.3"){
                         cell.style.opacity = "0.7";
                     }
@@ -449,7 +449,7 @@ const time = ref(0);
         </div>
         <div id="selectAlgo">
 
-                <Select v-model="algorhitm" >
+                <Select @update:modelValue="solved = false" v-model="algorhitm" >
                     <SelectTrigger>
                         <SelectValue  class="text-md text-orange-300" placeholder="Pick an algorhitm" />
                     </SelectTrigger>
@@ -486,6 +486,9 @@ const time = ref(0);
             </div>
             <div class="text-xl p-3 border rounded">
                 Time taken: {{time}}ms | {{time/1000}}s
+            </div>
+            <div class="text-xl p-3 border rounded">
+                Steps : {{path.length}}
             </div>
             <div v-if="pathFound" class="flex flex-row gap-1 w-full justify-center">
                 <Button :disabled="buttonsDisabled"  @click="visualizePath(path)" class="w-5/12">Visualize Path</Button>

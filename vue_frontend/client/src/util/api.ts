@@ -31,7 +31,8 @@ const sendToSolve = async(matrix,startString,endString,algo) =>{
             const data = response.data;
             return data;
         })
-        .catch(() =>{
+        .catch((error) =>{
+            console.log(error);
             return null;
         })
     return response;
